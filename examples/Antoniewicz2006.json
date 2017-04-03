@@ -1,0 +1,96 @@
+{
+  "model_metadata": {
+    "http://purl.org/dc/terms/title": "Simple network model",
+    "http://purl.org/dc/terms/source": "http://www.sciencedirect.com/science/article/pii/S1096717606000061",
+    "http://purl.org/dc/terms/bibliographicCitation": "Antoniewicz, Maciek R., Joanne K. Kelleher, and Gregory Stephanopoulos. \"Determination of confidence intervals of metabolic fluxes estimated from stable isotope measurements.\" Metabolic engineering 8.4 (2006): 324-337."
+  },
+  "model": {
+    "isotopic_labeling_states_per_atom": 2,
+    "reaction_network": {
+      "v1": {
+        "type": "mfa",
+        "reaction": "A (abc) -> B (abc)"
+      },
+      "v2": {
+        "type": "mfa",
+        "reaction": "B (abc) <-> D (abc)"
+      },
+      "v3": {
+        "type": "mfa",
+        "reaction": "B (abc) -> C (bc) + E (a)"
+      },
+      "v4": {
+        "type": "mfa",
+        "reaction": "B (abc) + C (de) -> D (bcd) + E (a) + E (e)"
+      },
+      "v5": {
+        "type": "mfa",
+        "reaction": "D (abc) -> F (abc)"
+      },
+      "b1": {
+        "type": "mfa",
+        "reaction": "A.ext (abc) -> A (abc)"
+      },
+      "b2": {
+        "type": "mfa",
+        "reaction": "E (a) -> E.ext (a)"
+      },
+      "b3": {
+        "type": "mfa",
+        "reaction": "F (abc) -> F.ext (abc)"
+      }
+    },
+    "experiments": {
+      "exp1": {
+        "isotopic_distributions": {
+          "A.ext": [
+            {
+              "%": 100,
+              "isotopic_distribution": [[1,0],[0,1],[1,0]]
+            }
+          ]
+        },
+        "measurements": {
+          "F.ext#123,M+0": [
+            {
+              "=": 0.0001,
+              "weight": 333.3333333333333
+            }
+          ],
+          "F.ext#123,M+1": [
+            {
+              "=": 0.8008,
+              "weight": 400
+            }
+          ],
+          "F.ext#123,M+2": [
+            {
+              "=": 0.1983,
+              "weight": 500
+            }
+          ],
+          "F.ext#123,M+3": [
+            {
+              "=": 0.0009,
+              "weight": 666.6666666666666
+            }
+          ],
+          "F.ext#123,M+0 + F.ext#123,M+1 + F.ext#123,M+2 + F.ext#123,M+3": [
+            {
+              "=": 1
+            }
+          ]
+        }
+      }
+    },
+    "constraints": {
+      "bounds": {
+        "b1.f": {
+          "=": 100
+        }
+      },
+      "default_lower_bound": 0,
+      "default_upper_bound": 150
+    }
+  }
+}

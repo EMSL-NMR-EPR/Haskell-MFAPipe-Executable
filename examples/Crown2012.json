@@ -1,0 +1,104 @@
+{
+  "model_metadata": {
+    "http://purl.org/dc/terms/title": "Extended metabolic network model",
+    "http://purl.org/dc/terms/source": "http://www.sciencedirect.com/science/article/pii/S1096717611001273",
+    "http://purl.org/dc/terms/bibliographicCitation": "Crown, Scott B., and Maciek R. Antoniewicz. \"Selection of tracers for 13 C-metabolic flux analysis using elementary metabolite units (EMU) basis vector methodology.\" Metabolic engineering 14.2 (2012): 150-161."
+  },
+  "model": {
+    "isotopic_labeling_states_per_atom": 2,
+    "reaction_network": {
+      "v1": {
+        "type": "mfa",
+        "reaction": "A (abc) -> B (abc)"
+      },
+      "v2": {
+        "type": "mfa",
+        "reaction": "B (abc) -> E (abc)"
+      },
+      "v3-4": {
+        "type": "mfa",
+        "reaction": "B (abc) <-> C (c) + D (ab)"
+      },
+      "v5": {
+        "type": "mfa",
+        "reaction": "B (abc) + D (de) -> E (abd) + G (c) + G (e)"
+      },
+      "v6": {
+        "type": "mfa",
+        "reaction": "E (abc) -> F (abc)"
+      },
+      "v7": {
+        "type": "mfa",
+        "reaction": "C (a) -> H (a)"
+      },
+      "b1": {
+        "type": "mfa",
+        "reaction": "A.ext (abc) -> A (abc)"
+      },
+      "b2": {
+        "type": "mfa",
+        "reaction": "F (abc) -> F.ext (abc)"
+      },
+      "b3": {
+        "type": "mfa",
+        "reaction": "G (a) -> G.ext (a)"
+      },
+      "b4": {
+        "type": "mfa",
+        "reaction": "H (a) -> H.ext (a)"
+      }
+    },
+    "experiments": {
+      "exp1": {
+        "isotopic_distributions": {
+          "A.ext": [
+            {
+              "%": 50,
+              "isotopic_distribution": [[1,0],[0,1],[1,0]]
+            },
+            {
+              "%": 50,
+              "isotopic_distribution": [[1,0],[1,0],[0,1]]
+            }
+          ]
+        },
+        "measurements": {
+          "F.ext#123,M+0": [
+            {
+              "=": 0.2429
+            }
+          ],
+          "F.ext#123,M+1": [
+            {
+              "=": 0.7286
+            }
+          ],
+          "F.ext#123,M+2": [
+            {
+              "=": 0.0285
+            }
+          ],
+          "F.ext#123,M+3": [
+            {
+              "=": 0
+            }
+          ],
+          "F.ext#123,M+0 + F.ext#123,M+1 + F.ext#123,M+2 + F.ext#123,M+3": [
+            {
+              "=": 1
+            }
+          ]
+        }
+      }
+    },
+    "constraints": {
+      "bounds": {
+        "b1.f": {
+          "=": 100
+        }
+      },
+      "default_lower_bound": 0,
+      "default_upper_bound": 2000
+    }
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "model_metadata": {
+    "http://purl.org/dc/terms/title": "Simplified model of the tricarboxylic acid cycle",
+    "http://purl.org/dc/terms/source": "http://www.sciencedirect.com/science/article/pii/S109671760600084X",
+    "http://purl.org/dc/terms/bibliographicCitation": "Antoniewicz, Maciek R., Joanne K. Kelleher, and Gregory Stephanopoulos. \"Elementary metabolite units (EMU): a novel framework for modeling isotopic distributions.\" Metabolic engineering 9.1 (2007): 68-86."
+  },
+  "model": {
+    "isotopic_labeling_states_per_atom": 2,
+    "reaction_network": {
+      "v1": {
+        "type": "mfa",
+        "reaction": "OAC (abcd) + AcCoA (ef) -> Cit (dcbfea)"
+      },
+      "v2": {
+        "type": "mfa",
+        "reaction": "Cit (abcdef) -> AKG (abcde) + CO2 (f)"
+      },
+      "v3": {
+        "type": "mfa",
+        "reaction": "AKG (abcde) -> Glu (abcde)"
+      },
+      "v4": {
+        "type": "mfa",
+        "reaction": "AKG (abcde) -> Suc (bcde) + CO2 (a)"
+      },
+      "v5": {
+        "type": "mfa",
+        "reaction": "Suc (0.5 abcd + 0.5 dcba) -> Fum (0.5 abcd + 0.5 dcba)"
+      },
+      "v6-7": {
+        "type": "mfa",
+        "reaction": "Fum (0.5 abcd + 0.5 dcba) <-> OAC (abcd)"
+      },
+      "v8": {
+        "type": "mfa",
+        "reaction": "Asp (abcd) -> OAC (abcd)"
+      },
+      "b1": {
+        "type": "mfa",
+        "reaction": "AcCoA.ext (ab) -> AcCoA (ab)"
+      },
+      "b2": {
+        "type": "mfa",
+        "reaction": "Asp.ext (abcd) -> Asp (abcd)"
+      },
+      "b3": {
+        "type": "mfa",
+        "reaction": "CO2 (a) -> CO2.ext (a)"
+      },
+      "b4": {
+        "type": "mfa",
+        "reaction": "Glu (abcde) -> Glu.ext (abcde)"
+      }
+    },
+    "experiments": {
+      "exp1": {
+        "isotopic_distributions": {
+          "Asp.ext": [
+            {
+              "%": 100,
+              "isotopic_distribution": [[1,0],[1,0],[1,0],[1,0]]
+            }
+          ],
+          "AcCoA.ext": [
+            {
+              "%": 50,
+              "isotopic_distribution": [[1,0],[1,0]]
+            },
+            {
+              "%": 25,
+              "isotopic_distribution": [[1,0],[0,1]]
+            },
+            {
+              "%": 25,
+              "isotopic_distribution": [[0,1],[0,1]]
+            }
+          ]
+        },
+        "measurements": {
+          "Fum#123,M+0": [
+            {
+              "=": 0.5698
+            }
+          ],
+          "Fum#123,M+1": [
+            {
+              "=": 0.2698
+            }
+          ],
+          "Fum#123,M+2": [
+            {
+              "=": 0.1385
+            }
+          ],
+          "Fum#123,M+3": [
+            {
+              "=": 0.0219
+            }
+          ],
+          "Fum#123,M+0 + Fum#123,M+1 + Fum#123,M+2 + Fum#123,M+3": [
+            {
+              "=": 1
+            }
+          ],
+          "Glu.ext#12345,M+0": [
+            {
+              "=": 0.3464
+            }
+          ],
+          "Glu.ext#12345,M+1": [
+            {
+              "=": 0.2695
+            }
+          ],
+          "Glu.ext#12345,M+2": [
+            {
+              "=": 0.2708
+            }
+          ],
+          "Glu.ext#12345,M+3": [
+            {
+              "=": 0.0807
+            }
+          ],
+          "Glu.ext#12345,M+4": [
+            {
+              "=": 0.0286
+            }
+          ],
+          "Glu.ext#12345,M+5": [
+            {
+              "=": 0.0039
+            }
+          ],
+          "Glu.ext#12345,M+0 + Glu.ext#12345,M+1 + Glu.ext#12345,M+2 + Glu.ext#12345,M+3 + Glu.ext#12345,M+4 + Glu.ext#12345,M+5": [
+            {
+              "=": 1
+            }
+          ]
+        }
+      }
+    },
+    "constraints": {
+      "bounds": {
+        "b1.f": {
+          "=": 100
+        },
+        "b2.f": {
+          "=": 50
+        }
+      },
+      "default_lower_bound": 0,
+      "default_upper_bound": 150
+    }
+  }
+}

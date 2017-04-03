@@ -1,0 +1,48 @@
+{
+  "model_metadata": {
+    "http://purl.org/dc/terms/title": "Example network to illustrate flux balance analysis",
+    "http://purl.org/dc/terms/source": "http://www.sciencedirect.com/science/article/pii/S0031942207002749",
+    "http://purl.org/dc/terms/bibliographicCitation": "Rios-Estepa, Rigoberto, and Bernd Markus Lange. \"Experimental and mathematical approaches to modeling plant metabolic networks.\" Phytochemistry 68.16 (2007): 2351-2374."
+  },
+  "model": {
+    "reaction_network": {
+      "v1": {
+        "type": "fba",
+        "reaction": "A -> B"
+      },
+      "v2": {
+        "type": "fba",
+        "reaction": "A -> C"
+      },
+      "v3": {
+        "type": "fba",
+        "reaction": "B -> C"
+      },
+      "b1": {
+        "type": "fba",
+        "reaction": "A.ext -> A"
+      },
+      "b2": {
+        "type": "fba",
+        "reaction": "C -> C.ext"
+      },
+      "b3": {
+        "type": "fba",
+        "reaction": "B -> B.ext"
+      }
+    },
+    "constraints": {
+      "objective_function": {
+        "max": "b2.f + b3.f"
+      },
+      "linear_constraints": {
+        "b1.f": {
+          "<=": 10
+        },
+        "-3 b2.f + b3.f": {
+          ">=": 0
+        }
+      }
+    }
+  }
+}
