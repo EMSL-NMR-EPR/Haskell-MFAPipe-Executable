@@ -6,7 +6,7 @@ stoichiometric paradigm and Elementary Metabolite Units (EMU) method.
 
 ## License (ECL-2.0)
 
-Copyright 2016 Pacific Northwest National Laboratory Licensed under the
+Copyright 2016-17 Pacific Northwest National Laboratory Licensed under the
 Educational Community License, Version 2.0 (the "License"); you may
 not use this file except in compliance with the License. You may
 obtain a copy of the License at
