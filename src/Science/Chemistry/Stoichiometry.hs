@@ -8,7 +8,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Science.Chemistry.Stoichiometry
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -62,7 +62,7 @@ import           Science.Chemistry.Types
 --
 class (Ord a) => HasStoichiometry a r | r -> a where
   {-# MINIMAL assertStoichiometryM #-}
-  
+
   -- | @assertStoichiometryM f g r@ is a computation that asserts the stoichiometry of @r@, given the functions @f@ and @g@, in the context of an arbitrary 'Monad'.
   assertStoichiometryM
     :: (Monad m)
@@ -85,7 +85,7 @@ class (Ord a) => HasStoichiometry a r | r -> a where
 --
 class (Ord i, Ord a) => MutableStoichiometricModel i a s | s -> i, s -> a where
   {-# MINIMAL modifyStoichiometricModelM #-}
-  
+
   -- | @modifyStoichiometricModelM i@ is a computation that modifies the current state of a stoichiometric model.
   modifyStoichiometricModelM :: (MonadReader r m, MonadState s m, HasStoichiometry a r) => i -> m ()
 

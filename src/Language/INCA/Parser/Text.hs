@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Language.INCA.Parser.Text
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -51,12 +51,12 @@ import           Language.INCA.Types
 -- > , alexScanTokens
 -- > ) where
 -- > }
--- > 
+-- >
 -- > %wrapper "basic"
 -- >
 -- > $alpha = [a-zA-Z]
 -- > $digit = [0-9]
--- > 
+-- >
 -- > tokens :-
 -- >   $white+                                ;
 -- >   [$alpha $digit] [$alpha $digit \- \_]* { \string -> Symbol string }
@@ -72,7 +72,7 @@ import           Language.INCA.Types
 -- > module Language.INCA.Parser
 -- > ( parseSymbol
 -- > ) where
--- > 
+-- >
 -- > import Language.INCA.Lexer
 -- > }
 -- >

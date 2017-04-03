@@ -6,7 +6,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Language.FluxJS.Conversion.Text
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -263,7 +263,7 @@ fromFluxJSMeasurement (FluxJS.Measurement x) = x
 -- Internal
 -- ----------------------------------------------------------------------------
 
--- | @padRight x0 n xs@ pads @xs@ with @x0@ until @'length' xs '==' n@. 
+-- | @padRight x0 n xs@ pads @xs@ with @x0@ until @'length' xs '==' n@.
 padRight :: a -> Int -> [a] -> [a]
 padRight x n xs
   | diff > 0 = xs ++ replicate diff x

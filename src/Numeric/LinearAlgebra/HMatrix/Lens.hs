@@ -4,7 +4,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Numeric.LinearAlgebra.HMatrix.Lens
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -58,7 +58,7 @@ _Rows = Control.Lens.iso Numeric.LinearAlgebra.HMatrix.fromRows Numeric.LinearAl
 -- | The 'AsVector' class is used for types that can be converted to and from 'Vector'.
 class AsVector f where
   {-# MINIMAL _Vector #-}
-  
+
   _Vector :: (Container Vector a, Container Vector b) => Iso (f a) (f b) (Vector a) (Vector b)
 
 instance AsVector Vector where
@@ -77,7 +77,7 @@ instance AsVector Conv where
 -- | The 'AsMatrix' class is used for types that can be converted to and from 'Matrix'.
 class AsMatrix f where
   {-# MINIMAL _Matrix #-}
-  
+
   _Matrix :: (Container Vector a, Container Vector b, Element a, Element b) => Iso (f a) (f b) (Matrix a) (Matrix b)
 
 instance AsMatrix Matrix where

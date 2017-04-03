@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Science.Chemistry.FluxVar
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -121,7 +121,7 @@ isForwards _ = False
 -- | Return 'True' if the given metabolic flux variables are the reverse of each other, 'False' otherwise.
 --
 -- Note: This function is reflexive, i.e.,
--- 
+--
 -- > forall x y. isReverse x y == isReverse y x
 --
 isReverse :: (Eq a, Eq b) => FluxVar a b -> FluxVar a b -> Bool

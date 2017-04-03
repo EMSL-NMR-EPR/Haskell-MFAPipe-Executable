@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Graph.Inductive.Query.DFS.EdgeSmoothing
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -36,7 +36,7 @@ import qualified Data.Graph.Inductive.Query.DFS
 -- | The 'Smoothable' class is used for types that are edge labels and can be smoothed.
 class Smoothable a where
   {-# MINIMAL smoothMaybe #-}
-  
+
   -- | @smoothMaybe x y@ is the smoothed edge label.
   --
   -- If @'Just' z@, then the pair of 'LEdge's is smoothed. If 'Nothing', then the pair of 'LEdge's is not smoothed.

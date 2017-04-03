@@ -9,7 +9,7 @@ description:
   Metabolic Flux Analysis (MFA) and Flux Balance Analysis (FBA), using the
   stoichiometric paradigm and Elementary Metabolite Units (EMU) method.
 bug-reports:
-  https://github.com/markborkum/Haskell-MFAPipe-Executable/issues
+  https://jira.pnnl.gov/jira/projects/MB/issues
 license:
   ECL-2.0
 license-file:
@@ -19,7 +19,7 @@ author:
 maintainer:
   mark.borkum@pnnl.gov
 copyright:
-  2016 Pacific Northwest National Laboratory
+  2016-17 Pacific Northwest National Laboratory
 category:
   Bioinformatics, Chemistry, Science
 build-type:
@@ -31,12 +31,12 @@ cabal-version:
   >= 1.10
 source-repository head
   type: git
-  location: https://github.com/markborkum/Haskell-MFAPipe-Executable
+  location: git+https://stash.pnnl.gov/scm/mb/haskell-mfapipe-executable.git
 
 executable mfaPipe
   main-is:
     Main.hs
-  
+
   build-depends:
     aeson                >= 0.7.0.5  && < 0.12,
     attoparsec           == 0.13.*            ,
@@ -67,7 +67,7 @@ executable mfaPipe
     vector               >= 0.10     && < 0.11,
     wl-pprint-text       >= 1.1      && < 1.2 ,
     zip-archive          >= 0.2.3    && < 0.3
-  
+
   other-modules:
     Control.Comonad.Trans.Rall
     Control.Monad.Random.Instances
@@ -149,16 +149,16 @@ executable mfaPipe
     Science.Chemistry.Types
     System.Log.Logger.Instances
     Text.PrettyPrint.Leijen.Text.Instances
-  
+
   cpp-options:
     -traditional
-  
+
   ghc-options:
     -Wall -fwarn-tabs -O2 -fdicts-cheap -funbox-strict-fields -fmax-simplifier-iterations=10 -threaded
-  
+
   hs-source-dirs:
     src
-  
+
   default-language:
     Haskell2010
 
@@ -192,7 +192,7 @@ library
     unordered-containers >= 0.2.5.0  && < 0.3 ,
     wl-pprint-text       >= 1.1      && < 1.2 ,
     zip-archive          >= 0.2.3    && < 0.3
-  
+
   exposed-modules:
     Control.Comonad.Trans.Rall
     Control.Monad.Random.Instances
@@ -274,15 +274,15 @@ library
     Science.Chemistry.Types
     System.Log.Logger.Instances
     Text.PrettyPrint.Leijen.Text.Instances
-  
+
   cpp-options:
     -traditional
-  
+
   ghc-options:
     -Wall -fwarn-tabs -O2 -fdicts-cheap -funbox-strict-fields -fmax-simplifier-iterations=10 -threaded
-  
+
   hs-source-dirs:
     src
-  
+
   default-language:
     Haskell2010

@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Science.Chemistry.EMU.Factorized.Class
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -19,6 +19,6 @@ module Science.Chemistry.EMU.Factorized.Class
 -- | The 'Factorized' class is used for types that have a unique factorization.
 class Factorized a where
   {-# MINIMAL factors #-}
-  
+
   -- | @factors x@ is the list of factors of @x@.
   factors :: a -> [a]

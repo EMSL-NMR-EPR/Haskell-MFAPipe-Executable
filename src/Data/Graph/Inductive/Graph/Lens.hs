@@ -6,7 +6,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Graph.Inductive.Graph.Lens
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -41,13 +41,13 @@ import qualified GHC.Exts
 -- | The 'AsEdge' class is used for types that can be converted to and from labeled edges.
 class (Ord (NodeLabel a), Ord (EdgeLabel a)) => AsEdge a where
   {-# MINIMAL _Edge #-}
-  
+
   -- | Type of node labels.
   type NodeLabel a :: *
-  
+
   -- | Type of edge labels.
   type EdgeLabel a :: *
-  
+
   -- | An isomorphism between a scalar and a labeled edge.
   _Edge :: Iso' a (NodeLabel a, NodeLabel a, EdgeLabel a)
 

@@ -4,7 +4,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  MFAPipe.FBA
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -111,10 +111,10 @@ toFBA
 toFBA (FluxJS.Model base0 reactionNetwork0 (FluxJS.Experiments experiments0) (FluxJS.Constraints objectiveFunctionMaybe0 (FluxJS.Bounds bounds0) _ (FluxJS.LinearConstraints linearConstraints0) _ lowerBound0 _ upperBound0 _ _)) = do
   when (Data.Maybe.isJust base0) $ do
     System.Log.Simple.warning (Text.Printf.printf "Ignoring \"isotopic_labeling_states_per_atom\" attribute of FluxJS document: %d" (Data.Maybe.fromJust base0))
-  
+
   unless (Data.HashMap.Strict.null experiments0) $ do
     System.Log.Simple.warning (Text.Printf.printf "Ignoring %s of \"experiments\" attribute of FluxJS document" (pluralizeWith (const "children") (Data.HashMap.Strict.size experiments0) "child"))
-  
+
   -- Construct the chemical reaction network.
   System.Log.Simple.info "Constructing chemical reaction network"
   reactionNetwork <- fromFluxJSReactionNetwork reactionNetwork0
@@ -125,7 +125,7 @@ toFBA (FluxJS.Model base0 reactionNetwork0 (FluxJS.Experiments experiments0) (Fl
       ix' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty ix)))
       reaction' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty reaction)))
     System.Log.Simple.debug (Text.Printf.printf "[%d] %s = %s" n ix' reaction')
-  
+
   -- Construct the stoichiometric model for the chemical reaction network.
   System.Log.Simple.info "Constructing stoichiometric model"
   let
@@ -142,7 +142,7 @@ toFBA (FluxJS.Model base0 reactionNetwork0 (FluxJS.Experiments experiments0) (Fl
     let
       k' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty k)))
     System.Log.Simple.debug (Text.Printf.printf "[%d] %s" n k')
-  
+
   -- Construct the objective function.
   System.Log.Simple.info "Constructing objective function"
   -- Ensure that an objective function is specified.
@@ -161,7 +161,7 @@ toFBA (FluxJS.Model base0 reactionNetwork0 (FluxJS.Experiments experiments0) (Fl
       objective' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty (LinearFunction (Data.Map.Lazy.toAscList objective)))))
     System.Log.Simple.debug (Text.Printf.printf "Objective function: %s" objective')
     System.Log.Simple.debug (Text.Printf.printf "Objective function direction: %s" (case direction of Max -> "Maximize" ; Min -> "Minimize"))
-  
+
   -- Construct the bounds.
   System.Log.Simple.info "Constructing bounds"
   System.Log.Simple.debug (Text.Printf.printf "Default lower bound: %f" lowerBound0)
@@ -242,7 +242,7 @@ toFBA (FluxJS.Model base0 reactionNetwork0 (FluxJS.Experiments experiments0) (Fl
             System.Log.Simple.debug (Text.Printf.printf "[%d] %s = %f" n ix' equ)
           Bound lB uB -> do
             System.Log.Simple.debug (Text.Printf.printf "[%d] %f <= %s <= %f" n lB ix' uB)
-  
+
   -- Construct the linear constraints.
   System.Log.Simple.info "Constructing linear constraints"
   linearConstraints <-
@@ -285,7 +285,7 @@ toFBA (FluxJS.Model base0 reactionNetwork0 (FluxJS.Experiments experiments0) (Fl
         System.Log.Simple.debug (Text.Printf.printf "[%d] %s = %f" n m' equ)
       Bound lB uB -> do
         System.Log.Simple.debug (Text.Printf.printf "[%d] %f <= %s <= %f" n lB m' uB)
-  
+
   let
     -- | @mkLP dense@ is the LP computation for @dense@.
     mkLP :: Dense (FluxVar Text Text) (MetaboliteVar Text) Double -> LP (FluxVar Text Text) Double
@@ -308,7 +308,7 @@ toFBA (FluxJS.Model base0 reactionNetwork0 (FluxJS.Experiments experiments0) (Fl
     -- | @lp@ is the LP computation.
     lp :: LP (FluxVar Text Text) Double
     lp@(LP _dir _objectiveFunc _constraints _varBounds _varTypes) = mkLP reactionNetworkDense
-  
+
   -- Construct the FBA computation.
   let
     fba :: FBA (FluxVar Text Text) (MetaboliteVar Text) Text Double
@@ -324,7 +324,7 @@ toFBA (FluxJS.Model base0 reactionNetwork0 (FluxJS.Experiments experiments0) (Fl
       , _fbaLP = lp
       , runFBA = \opts -> fmap (second (fmap toFBAResult)) (Data.LinearProgram.GLPK.Solver.glpSolveVars opts lp)
       }
-  
+
   -- Fin!
   return fba
 
@@ -377,7 +377,7 @@ toArchiveWith
   -- ^ archive
 toArchiveWith opts modtime FBA{..} FBAResult{..} = do
   System.Log.Simple.info "Serializing CSV documents"
-  
+
   System.Log.Simple.debug "[1] Chemical reaction network"
   let
     reactionNetworkEntry :: Entry
@@ -427,9 +427,9 @@ toArchiveWith opts modtime FBA{..} FBAResult{..} = do
         objectiveFunctionFilePath = "result/objective_function.csv"
         objectiveFunctionCsv :: ByteString
         objectiveFunctionCsv = MFAPipe.Csv.Types.ObjectiveFunction.encodeWith opts (direction _fbaLP) (objective _fbaLP) _fbaResultObjectiveFunction
-  
+
   System.Log.Simple.info "CSV documents were serialized successfully!"
-  
+
   -- "."
   System.Log.Simple.info "Constructing zip archive"
   let
@@ -446,6 +446,6 @@ toArchiveWith opts modtime FBA{..} FBAResult{..} = do
       , zComment = Data.ByteString.Lazy.empty
       }
   System.Log.Simple.info "Zip archive was constructed successfully!"
-  
+
   -- Fin!
   return archive

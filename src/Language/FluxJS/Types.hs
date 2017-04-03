@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Language.FluxJS.Types
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -278,7 +278,7 @@ data Measurement a = Measurement a
 -- >   "default_weight_maybe": 1,
 -- >   "default_weight": 1
 -- > }
--- 
+--
 data Constraints a = Constraints (Maybe ObjectiveFunction) (Bounds a) (Weights a) (LinearConstraints a) (Maybe a) a (Maybe a) a (Maybe a) a
   deriving (Eq, Read, Show, Functor, Foldable, Traversable)
 
@@ -318,7 +318,7 @@ data Bounds a = Bounds (HashMap Text (Bound a))
 -- >     ... // Measurement
 -- >   }
 -- > }
--- 
+--
 data Weights a = Weights (HashMap Text (Measurement a))
   deriving (Eq, Read, Show, Functor, Foldable, Traversable)
 

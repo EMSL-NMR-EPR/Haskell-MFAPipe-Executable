@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Science.Chemistry.EMU.HasSize.Class
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -23,7 +23,7 @@ import qualified Data.IntMap.Strict
 -- | The 'HasSize' class is used for types that have a size.
 class HasSize a where
   {-# MINIMAL size #-}
-  
+
   -- | @size x@ is the size of @x@.
   size :: a -> Int
 

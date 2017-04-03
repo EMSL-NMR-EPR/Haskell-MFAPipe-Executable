@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  MFAPipe.MFA
--- Copyright   :  2016 Pacific Northwest National Laboratory
+-- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
 -- Maintainer  :  mark.borkum@pnnl.gov
@@ -232,10 +232,10 @@ toMFA MFASpec{..} =
   let
     ixs :: Set (FluxVar Text Text)
     ixs = _denseReactionIndices _mfaSpecReactionNetworkDense
-    
+
     ixsAscList :: [FluxVar Text Text]
     ixsAscList = Data.Set.toAscList ixs
-    
+
     xs :: [(Map (MetaboliteVar Text) [(Rational, Matrix Double)], [EMUExpr (MetaboliteVar Text)])]
     ys, sigmas :: Samples Double
     ~(xs, (ys, sigmas)) = fromMFAParallelLabelingExperiment _mfaSpecMFAParallelLabelingExperiment
@@ -245,43 +245,43 @@ toMFA MFASpec{..} =
           where
             fromLists :: (Storable e) => [[e]] -> Vector e
             fromLists = Numeric.LinearAlgebra.HMatrix.vjoin . map Numeric.LinearAlgebra.HMatrix.fromList
-    
+
     nullspace, nullspace_tr :: Matrix Double
     nullspace = _nullspaceKernelGaussJordan _mfaSpecReactionNetworkNullspace
     nullspace_tr = Numeric.LinearAlgebra.HMatrix.tr nullspace
-    
+
     gr :: EMUGraph (FluxVar Text Text) (MetaboliteVar Text)
     gr = Control.Lens.view _EMUGraph _mfaSpecEMUReactionNetwork
-    
+
     doSteadyStateEMUExpr :: Params Double -> (Vector Double, Matrix Double)
     doSteadyStateEMUExpr = either (error . show) (either (error . show) id . concatModelAndJacobianE . map Control.Monad.Trans.Except.runExcept) . Control.Monad.Trans.Except.runExcept . Control.Monad.Trans.Reader.runReaderT (fmap (map (\ ~(_, _, e) -> fmap (second (`Numeric.LinearAlgebra.HMatrix.mul` nullspace)) e)) (Control.Monad.Trans.Reader.withReaderT (Numeric.LinearAlgebra.HMatrix.app nullspace) (runSteadyStateEMUExpr (fromInteger _mfaSpecRadix) ixs gr xs)))
-    
+
     doSteadyStateEMUExpr' :: Params Double -> [Dict (EMUExprF (MetaboliteVar Text)) (FluxVar Text Text) Double]
     doSteadyStateEMUExpr' = either (error . show) id . Control.Monad.Trans.Except.runExcept . Control.Monad.Trans.Reader.runReaderT (Control.Monad.Trans.Reader.withReaderT (Numeric.LinearAlgebra.HMatrix.app nullspace) (runSteadyStateEMUExpr' (fromInteger _mfaSpecRadix) ixs gr (map fst xs)))
-    
+
     model :: Model Double
     model = fst . doSteadyStateEMUExpr
-    
+
     mJac :: Maybe (Jacobian Double)
     mJac = Just (snd . doSteadyStateEMUExpr)
-    
+
     ps0 :: Params Double
     ps0 = _mfaSpecInitialParams
-    
+
     mfaConstraints :: MFAConstraints (FluxVar Text Text) Double
     mfaConstraints@MFAConstraints{..} = _mfaSpecMFAConstraints
-    
+
     constraints :: Constraints Double
     constraints = Constraints lBs_Vector uBs_Vector ws_Vector linearConstraints_Matrix_Vector
       where
         freeVars :: [IndexOf Vector]
         freeVars = Data.Maybe.catMaybes (Data.Map.Strict.keys (_nullspaceBackwards _mfaSpecReactionNetworkNullspace))
-        
+
         lBs_Vector, uBs_Vector, ws_Vector :: Maybe (Params Double)
         lBs_Vector = mkVectorWithDefault freeVars _mfaConstraintsDefaultLowerBoundMaybe _mfaConstraintsDefaultLowerBound _mfaConstraintsLowerBounds
         uBs_Vector = mkVectorWithDefault freeVars _mfaConstraintsDefaultUpperBoundMaybe _mfaConstraintsDefaultUpperBound _mfaConstraintsUpperBounds
         ws_Vector = mkVectorWithDefault freeVars _mfaConstraintsDefaultWeightMaybe _mfaConstraintsDefaultWeight _mfaConstraintsWeights
-        
+
         linearConstraints_Matrix_Vector :: Maybe (Matrix Double, Vector Double)
         linearConstraints_Matrix_Vector
           | (Numeric.LinearAlgebra.HMatrix.rows new_matrix > 0) && (Numeric.LinearAlgebra.HMatrix.rows new_matrix == Numeric.LinearAlgebra.HMatrix.size new_vector) = Just (bimap (`Numeric.LinearAlgebra.HMatrix.mul` nullspace) id r0)
@@ -304,34 +304,34 @@ toMFA MFASpec{..} =
         --           | otherwise = Numeric.LinearAlgebra.HMatrix.vjoin [vector0, vector]
         --           where
         --             vector0 = Numeric.LinearAlgebra.HMatrix.konst 0 (Numeric.LinearAlgebra.HMatrix.rows nullspace)
-    
+
     ascList :: [(IndexOf Vector, Double)]
     ascList = Data.Map.Strict.toAscList _mfaConstraintsEqualities
-    
+
     toMFAResult :: Params Double -> Matrix Double -> Samples Double -> Matrix Double -> Info Double -> MFAResult (FluxVar Text Text) (MetaboliteVar Text) Double
     toMFAResult ps covar_ps new_ys jac_ps info =
       let
         ps' :: Vector Double
         ps' = nullspace `Numeric.LinearAlgebra.HMatrix.app` ps
-        
+
         var_ps :: Vector Double
         var_ps = Numeric.LinearAlgebra.HMatrix.takeDiag covar_ps
-        
+
         covar_ys :: Matrix Double
         covar_ys = jac_ps `Numeric.LinearAlgebra.HMatrix.mul` covar_ps `Numeric.LinearAlgebra.HMatrix.mul` Numeric.LinearAlgebra.HMatrix.tr jac_ps
-        
+
         var_ys :: Vector Double
         var_ys = Numeric.LinearAlgebra.HMatrix.takeDiag covar_ys
-        
+
         covar_ps' :: Matrix Double
         covar_ps' = nullspace `Numeric.LinearAlgebra.HMatrix.mul` covar_ps `Numeric.LinearAlgebra.HMatrix.mul` nullspace_tr
-        
+
         var_ps' :: Vector Double
         var_ps' = Numeric.LinearAlgebra.HMatrix.takeDiag covar_ps'
-        
+
         jac_ps' :: Matrix Double
         jac_ps' = jac_ps `Numeric.LinearAlgebra.HMatrix.mul` nullspace_tr
-        
+
         contrib :: Matrix Double
         contrib = Numeric.LinearAlgebra.HMatrix.fromLists $ do
           let
@@ -348,37 +348,37 @@ toMFA MFASpec{..} =
               var_ps_i = var_ps' `Numeric.LinearAlgebra.HMatrix.atIndex` i
               var_ys_j = var_ys `Numeric.LinearAlgebra.HMatrix.atIndex` j
             return (m_ij / (var_ps_i * var_ys_j))
-        
+
         degreesOfFreedom :: Int
         degreesOfFreedom = fromInteger (subtract (_mfaParallelLabelingExperimentIndependentFluxVarsCount _mfaSpecMFAParallelLabelingExperiment) (_mfaParallelLabelingExperimentIndependentMeasurementsCount _mfaSpecMFAParallelLabelingExperiment))
         degreesOfFreedom_Map :: Map Text Int
         degreesOfFreedom_Map = Data.Map.Strict.map (fromInteger . subtract (_mfaParallelLabelingExperimentIndependentFluxVarsCount _mfaSpecMFAParallelLabelingExperiment) . _mfaSingleLabelingExperimentIndependentMeasurementsCount) (_mfaParallelLabelingExperimentSingleLabelingExperiments _mfaSpecMFAParallelLabelingExperiment)
-        
+
         measurementCounts :: Map Text [(EMUExpr (MetaboliteVar Text), Int)]
         measurementCounts = Data.Map.Strict.map (map (second length) . Data.Map.Strict.toAscList . _mfaSingleLabelingExperimentMeasurements) (_mfaParallelLabelingExperimentSingleLabelingExperiments _mfaSpecMFAParallelLabelingExperiment)
-        
+
         ys_List, new_ys_List, var_ys_List, sigmas_List :: [Double]
         ys_List = Numeric.LinearAlgebra.HMatrix.toList ys
         new_ys_List = Numeric.LinearAlgebra.HMatrix.toList new_ys
         var_ys_List = Numeric.LinearAlgebra.HMatrix.toList var_ys
         sigmas_List = Numeric.LinearAlgebra.HMatrix.toList sigmas
-        
+
         ps'_Map, var_ps'_Map :: Map (FluxVar Text Text) Double
         ps'_Map = fromVectorAsMap ixsAscList ps'
         var_ps'_Map = fromVectorAsMap ixsAscList var_ps'
-        
+
         covar_ps'_Map :: Map (FluxVar Text Text) (Map (FluxVar Text Text) Double)
         covar_ps'_Map = fromMatrixAsMap ixsAscList ixsAscList covar_ps'
-        
+
         ys_Map, new_ys_Map, var_ys_Map, sigmas_Map :: Map Text [(EMUExpr (MetaboliteVar Text), [Double])]
         ys_Map = fromListAsAscListMap ys_List measurementCounts
         new_ys_Map = fromListAsAscListMap new_ys_List measurementCounts
         var_ys_Map = fromListAsAscListMap var_ys_List measurementCounts
         sigmas_Map = fromListAsAscListMap sigmas_List measurementCounts
-        
+
         fromMatrixRows :: Matrix Double -> Map Text (Map (EMUExpr (MetaboliteVar Text)) [Map (FluxVar Text Text) Double])
         fromMatrixRows = \matrix -> Data.Map.Strict.map (Data.Map.Strict.fromList . map (second (map (fromVectorAsMap ixsAscList)))) (fromListAsAscListMap (Numeric.LinearAlgebra.HMatrix.toRows matrix) measurementCounts)
-        
+
         mean_ys_Map, sse_Map, sst_Map :: Map Text Double
         mean_ys, sse, sst :: Double
         sse_Map = Data.Map.Strict.intersectionWith (\sigmas' ys' -> sum (zipWith (\sigma' y' -> sigma' * y' * y') (concatMap snd sigmas') (concatMap snd ys'))) sigmas_Map new_ys_Map
@@ -387,7 +387,7 @@ toMFA MFASpec{..} =
         mean_ys = Statistics.Sample.mean ys
         sst_Map = Data.Map.Strict.intersectionWith (\sigmas' ys' -> sum (zipWith (\sigma' y' -> sigma' * y' * y') (concatMap snd sigmas') ys')) sigmas_Map (Data.Map.Strict.intersectionWith (\ys' mean' -> map (subtract mean') (concatMap snd ys')) ys_Map mean_ys_Map)
         sst = sigmas `Numeric.LinearAlgebra.HMatrix.dot` (Numeric.LinearAlgebra.HMatrix.cmap (\y' -> y' * y') (Numeric.LinearAlgebra.HMatrix.cmap (\y' -> y' - mean_ys) ys))
-        
+
         reduced_chi2_Map :: Map Text Double
         reduced_chi2 :: Double
         reduced_chi2_Map = Data.Map.Strict.intersectionWith (\chi2 dof -> chi2 / fromIntegral dof) (Data.Map.Strict.intersectionWith (\ys' vars' -> sum (zipWith (\y var -> (y * y) / var) (concatMap snd ys') (concatMap snd vars'))) new_ys_Map var_ys_Map) degreesOfFreedom_Map
@@ -414,7 +414,7 @@ toMFA MFASpec{..} =
           , _mfaResultDict = Data.Map.Strict.fromList (zip (Data.Map.Strict.keys measurementCounts) (doSteadyStateEMUExpr' ps))
           , _mfaResultInfo = info
           }
-    
+
     levmar0, levmar1, levmar2, levmar3 :: LevMar Double (Params Double, Info Double, Matrix Double)
     levmar0 = Numeric.LevMar.Extras.LevMar.levmar model mJac ps0 ys constraints
     levmar1@(LevMar _ mkWeightedResiduals (Just mkWeightedJacobian) _ _ _) = Numeric.LevMar.Extras.LevMar.weighted sigmas levmar0
@@ -443,7 +443,7 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
           return radix0
   System.Log.Simple.info "Number of isotopic labeling states per atom was determined successfully!"
   System.Log.Simple.debug (Text.Printf.printf "Number of isotopic labeling states per atom: %d" radix)
-  
+
   System.Log.Simple.info "Constructing chemical reaction network"
   reactionNetwork <- Control.Monad.Trans.Except.withExceptT (either WrapINCAError WrapFluxJSError) (fromFluxJSReactionNetwork reactionNetwork0)
   System.Log.Simple.info "Chemical reaction network was constructed successfully!"
@@ -453,7 +453,7 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
       ix' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty ix)))
       reaction' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty reaction)))
     System.Log.Simple.debug (Text.Printf.printf "[%d] %s = %s" n ix' reaction')
-  
+
   System.Log.Simple.info "Constructing stoichiometric model"
   let
     reactionNetworkDense :: Dense (FluxVar Text Text) (MetaboliteVar Text) Double
@@ -469,7 +469,7 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
     let
       k' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty k)))
     System.Log.Simple.debug (Text.Printf.printf "[%d] %s" n k')
-  
+
   System.Log.Simple.info "Constructing nullspace"
   let
     reactionNetworkNullspace :: Nullspace (FluxVar Text Text) Double
@@ -490,7 +490,7 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
           u' = 'u' : show (u + 1)
         System.Log.Simple.debug (Text.Printf.printf "[%d] %s = %s" n ix' u')
   System.Log.Simple.info "Nullspace was constructed successfully!"
-  
+
   System.Log.Simple.info "Constructing EMU reaction network"
   let
     emuReactionNetwork :: EMUReactionNetwork (FluxVar Text Text) (MetaboliteVar Text)
@@ -503,13 +503,13 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
         ix' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty ix)))
         emuReaction' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty emuReaction)))
       System.Log.Simple.debug (Text.Printf.printf "[%d] %s = %s" n ix' emuReaction')
-  
+
   System.Log.Simple.info "Constructing EMU stoichiometric model"
   let
     emuReactionNetworkDense :: IntMap (Dense (FluxVar Text Text) (EMU (MetaboliteVar Text)) Double)
     emuReactionNetworkDense = toEMUStoichiometricModel emuReactionNetwork
   System.Log.Simple.info "EMU stoichiometric model was constructed successfully!"
-  
+
   System.Log.Simple.info "Constructing bounds"
   System.Log.Simple.debug (Text.Printf.printf "Default lower bound: %f" lowerBound0)
   System.Log.Simple.debug (Text.Printf.printf "Default upper bound: %f" upperBound0)
@@ -555,7 +555,7 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
             System.Log.Simple.debug (Text.Printf.printf "[%d] %s = %f" n u' equ)
           FluxJS.Between lB uB -> do
             System.Log.Simple.debug (Text.Printf.printf "[%d] %f <= %s <= %f" n lB u' uB)
-  
+
   System.Log.Simple.info "Constructing weights"
   System.Log.Simple.debug (Text.Printf.printf "Default weight: %f" weight0)
   weights <-
@@ -616,7 +616,7 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
     let
       m' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty (LinearFunction (Data.Map.Strict.toAscList m)))))
     System.Log.Simple.debug (Text.Printf.printf "[%d] %s = %f" n m' x)
-  
+
   System.Log.Simple.info "Constructing constraints"
   let
     equalities, lowerBounds, upperBounds :: Map (IndexOf Vector) Double
@@ -636,7 +636,7 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
       , _mfaConstraintsDefaultWeight = weight0
       }
   System.Log.Simple.info "Contraints were constructed successfully!"
-  
+
   System.Log.Simple.info "Constructing experiments"
   let
     toMFAParallelLabelingExperiment :: Map Text (Map (MetaboliteVar Text) [(Rational, Matrix Double)], Map (EMUExpr (MetaboliteVar Text)) [(Double, Double)]) -> MFAParallelLabelingExperiment (FluxVar Text Text) (MetaboliteVar Text) Double
@@ -670,11 +670,11 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
   System.Log.Simple.debug (Text.Printf.printf "Found %s" (pluralizeWith (++ "s") (Data.Map.Strict.size _mfaParallelLabelingExperimentSingleLabelingExperiments) "experiment"))
   forM_ (zip (enumFromThen 1 2 :: [Integer]) (Data.Map.Strict.keys _mfaParallelLabelingExperimentSingleLabelingExperiments)) $ \(n, experimentName) -> do
     System.Log.Simple.debug (Text.Printf.printf "[%d] %s" n (Data.Text.unpack experimentName))
-  
+
   System.Log.Simple.info "Initializing metabolic flux variables"
   initialParams <- getRandomParamsM mfaConstraints _nullspaceKernelGaussJordan
   System.Log.Simple.info "Metabolic flux variables were initialized successfully!"
-  
+
   return $ MFASpec
     { _mfaSpecRadix = radix
     , _mfaSpecReactionNetwork = reactionNetwork
