@@ -36,62 +36,36 @@ executable mfaPipe
   main-is:
     Main.hs
 
-  build-depends:
-    aeson,
-    attoparsec,
-    base,
-    bifunctors,
-    bytestring,
-    cassava,
-    cmdargs,
-    comonad,
-    containers,
-    data-default,
-    fgl,
-    fgl-algorithms-edge-smoothing,
-    fgl-algorithms-subgraph,
-    fgl-extras,
-    fgl-instances,
-    fgl-lens,
-    foldl,
-    glpk-hs,
-    hmatrix,
-    hmatrix-algorithms-gauss-jordan,
-    hmatrix-lens,
-    hmatrix-monoids,
-    injective,
-    injective-numeric,
-    lens,
-    levmar,
-    levmar-extras,
-    list-extras-at,
-    list-extras-zipper,
-    logger,
-    logger-instances,
-    MonadRandom,
-    MonadRandom-instances,
-    MonadRandom-logger-instances,
-    monad-parallel,
-    mtl,
-    parallel,
-    profunctors,
-    Rall,
-    random,
-    statistics,
-    text,
-    transformers,
-    unordered-containers,
-    vector,
-    wl-pprint-text,
-    zip-archive
+  build-depends: base >= 4.7 && < 5
+    , MFAPipe
+    , aeson
+    , bytestring
+    , cassava
+    , cmdargs
+    , containers
+    , data-default
+    , glpk-hs
+    , hmatrix
+    , hmatrix-algorithms-gauss-jordan
+    , hmatrix-monoids
+    , lens
+    , levmar
+    , levmar-extras
+    , logger
+    , logger-instances
+    , MonadRandom
+    , MonadRandom-logger-instances
+    , mtl
+    , random
+    , statistics
+    , text
+    , transformers
+    , unordered-containers
+    , vector
+    , wl-pprint-text
+    , zip-archive
 
   other-modules:
-    Language.FluxJS.Conversion.Text
-    Language.FluxJS.Types
-    Language.INCA.Constants
-    Language.INCA.Conversion.Text
-    Language.INCA.Parser.Text
-    Language.INCA.Types
     MFAPipe.Banner
     MFAPipe.Command
     MFAPipe.Csv.Constants
@@ -114,95 +88,45 @@ executable mfaPipe
     MFAPipe.Utils
     MFAPipe.Version
     MFAPipe.Warranty
-    Science.Chemistry.EMU
-    Science.Chemistry.EMU.EMU
-    Science.Chemistry.EMU.EMUGraph
-    Science.Chemistry.EMU.EMUReaction
-    Science.Chemistry.EMU.EMUReactionNetwork
-    Science.Chemistry.EMU.Factorized.Class
-    Science.Chemistry.EMU.HasSize.Class
-    Science.Chemistry.EMU.IsotopicLabeling.DSL.Evaluate.Class
-    Science.Chemistry.EMU.IsotopicLabeling.SteadyState
-    Science.Chemistry.EMU.Optimized.Class
-    Science.Chemistry.FluxVar
-    Science.Chemistry.IsotopicLabeling
-    Science.Chemistry.IsotopicLabeling.DSL.Display.Class
-    Science.Chemistry.IsotopicLabeling.DSL.FromDict.Class
-    Science.Chemistry.IsotopicLabeling.FractionMatrix
-    Science.Chemistry.IsotopicLabeling.FractionType
-    Science.Chemistry.IsotopicLabeling.FractionTypeDict
-    Science.Chemistry.IsotopicLabeling.FractionVector
-    Science.Chemistry.IsotopicLabeling.Isotopomer
-    Science.Chemistry.IsotopicLabeling.IsotopomerFractionMatrix
-    Science.Chemistry.IsotopicLabeling.IsotopomerFractionVector
-    Science.Chemistry.IsotopicLabeling.MassFraction
-    Science.Chemistry.IsotopicLabeling.MassFractionMatrix
-    Science.Chemistry.IsotopicLabeling.MassFractionVector
-    Science.Chemistry.IsotopicLabeling.SteadyState
-    Science.Chemistry.MetaboliteVar
-    Science.Chemistry.Parser.Text
-    Science.Chemistry.Reaction
-    Science.Chemistry.ReactionNetwork
-    Science.Chemistry.Stoichiometry
-    Science.Chemistry.Types
 
   ghc-options:
     -Wall -fwarn-tabs -fdicts-cheap -funbox-strict-fields -fmax-simplifier-iterations=10
 
   hs-source-dirs:
-    src
+    app
 
   default-language:
     Haskell2010
 
 library
-  build-depends:
-    aeson,
-    attoparsec,
-    base,
-    bifunctors,
-    bytestring,
-    cassava,
-    comonad,
-    containers,
-    data-default,
-    fgl,
-    fgl-algorithms-edge-smoothing,
-    fgl-algorithms-subgraph,
-    fgl-extras,
-    fgl-instances,
-    fgl-lens,
-    foldl,
-    glpk-hs,
-    hmatrix,
-    hmatrix-algorithms-gauss-jordan,
-    hmatrix-lens,
-    hmatrix-monoids,
-    injective,
-    injective-numeric,
-    lens,
-    levmar,
-    levmar-extras,
-    list-extras-at,
-    list-extras-zipper,
-    logger,
-    logger-instances,
-    mtl,
-    MonadRandom,
-    MonadRandom-instances,
-    MonadRandom-logger-instances,
-    monad-parallel,
-    parallel,
-    profunctors,
-    Rall,
-    random,
-    statistics,
-    text,
-    transformers,
-    vector,
-    unordered-containers,
-    wl-pprint-text,
-    zip-archive
+  build-depends: base >= 4.7 && < 5
+    , aeson
+    , attoparsec
+    , cassava
+    , containers
+    , data-default
+    , fgl
+    , fgl-algorithms-edge-smoothing
+    , fgl-algorithms-subgraph
+    , fgl-extras
+    , fgl-instances
+    , fgl-lens
+    , foldl
+    , hmatrix
+    , hmatrix-lens
+    , hmatrix-monoids
+    , injective
+    , injective-numeric
+    , lens
+    , list-extras-zipper
+    , mtl
+    , monad-parallel
+    , parallel
+    , Rall
+    , text
+    , transformers
+    , unordered-containers
+    , wl-pprint-text
 
   exposed-modules:
     Language.FluxJS.Conversion.Text
@@ -211,28 +135,6 @@ library
     Language.INCA.Conversion.Text
     Language.INCA.Parser.Text
     Language.INCA.Types
-    MFAPipe.Banner
-    MFAPipe.Command
-    MFAPipe.Csv.Constants
-    MFAPipe.Csv.Types.ContributionMatrix
-    MFAPipe.Csv.Types.EMUReactionNetwork
-    MFAPipe.Csv.Types.Flux
-    MFAPipe.Csv.Types.FluxCovarianceMatrix
-    MFAPipe.Csv.Types.Info
-    MFAPipe.Csv.Types.IsotopomerFractionVector
-    MFAPipe.Csv.Types.JacobianMatrix
-    MFAPipe.Csv.Types.MassFractionVector
-    MFAPipe.Csv.Types.NullspaceMatrix
-    MFAPipe.Csv.Types.ObjectiveFunction
-    MFAPipe.Csv.Types.ReactionNetwork
-    MFAPipe.Csv.Types.Residual
-    MFAPipe.Csv.Types.Statistics
-    MFAPipe.Csv.Types.Stoichiometry
-    MFAPipe.FBA
-    MFAPipe.MFA
-    MFAPipe.Utils
-    MFAPipe.Version
-    MFAPipe.Warranty
     Science.Chemistry.EMU
     Science.Chemistry.EMU.EMU
     Science.Chemistry.EMU.EMUGraph
