@@ -63,6 +63,7 @@ executable mfaPipe
     injective-numeric,
     lens,
     levmar,
+    levmar-extras,
     list-extras-at,
     list-extras-zipper,
     logger,
@@ -113,7 +114,6 @@ executable mfaPipe
     MFAPipe.Utils
     MFAPipe.Version
     MFAPipe.Warranty
-    Numeric.LevMar.Extras.LevMar
     Science.Chemistry.EMU
     Science.Chemistry.EMU.EMU
     Science.Chemistry.EMU.EMUGraph
@@ -182,6 +182,7 @@ library
     injective-numeric,
     lens,
     levmar,
+    levmar-extras,
     list-extras-at,
     list-extras-zipper,
     logger,
@@ -232,7 +233,6 @@ library
     MFAPipe.Utils
     MFAPipe.Version
     MFAPipe.Warranty
-    Numeric.LevMar.Extras.LevMar
     Science.Chemistry.EMU
     Science.Chemistry.EMU.EMU
     Science.Chemistry.EMU.EMUGraph
