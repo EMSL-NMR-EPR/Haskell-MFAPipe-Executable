@@ -36,7 +36,7 @@ import qualified Control.Monad.IO.Class
 import           Control.Monad.Error.Class (MonadError(..))
 import qualified Control.Monad.Error.Class
 import qualified Control.Monad.Random
-import           Control.Monad.Random.Instances ()
+import           Control.Monad.Random.Logger.Instances ()
 import qualified Control.Monad.Trans.Except
 import qualified Data.Aeson
 import qualified Data.ByteString.Lazy

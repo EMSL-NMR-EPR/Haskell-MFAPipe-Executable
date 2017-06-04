@@ -42,7 +42,7 @@ import           Control.Monad (forM_)
 import           Control.Monad.Random (RandT)
 import           Control.Monad.Random.Class (MonadRandom())
 import qualified Control.Monad.Random.Class
-import           Control.Monad.Random.Instances ()
+import           Control.Monad.Random.Logger.Instances ()
 import           Control.Monad.Trans.Except (ExceptT(..))
 import qualified Control.Monad.Trans.Except
 import qualified Control.Monad.Trans.Reader
