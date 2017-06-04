@@ -163,5 +163,5 @@ weightedWith c ws (LevMar done model mJac ps ys constraints) = LevMar done (g . 
 --    by M. Galassi, et al., (2009), online at
 --    <http://www.gnu.org/software/gsl/manual/html_node/Overview-of-Weighted-Nonlinear-Least_002dSquares-Fitting.html>.
 --
-weighted :: (Container Vector r, Num (Vector r), Num r) => Samples r -> LevMar r a -> LevMar r a
+weighted :: (Container Vector r, Num (Vector r), Fractional r) => Samples r -> LevMar r a -> LevMar r a
 weighted = weightedWith (flip (/))

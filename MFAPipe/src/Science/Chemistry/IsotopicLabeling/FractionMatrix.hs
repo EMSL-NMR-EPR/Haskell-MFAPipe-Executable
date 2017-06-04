@@ -54,7 +54,7 @@ import           Data.Injective ((:<:)(), Fix)
 import qualified Data.Injective
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict
-import           Data.Monoid (Product(..), Sum(..))
+-- import           Data.Monoid (Product(..), Sum(..))
 import           Data.Proxy (Proxy(..))
 import           Numeric.LinearAlgebra.HMatrix (Container(), Element(), IndexOf, Matrix, Vector)
 import qualified Numeric.LinearAlgebra.HMatrix
@@ -72,14 +72,14 @@ import qualified Text.PrettyPrint.Leijen.Text
 type family FractionMatrix (ty :: FractionType) :: * -> * where
   FractionMatrix 'IsotopomerFractionTy = IsotopomerFractionMatrix
   FractionMatrix 'MassFractionTy = MassFractionMatrix
-  FractionMatrix 'ProductTy = Product
-  FractionMatrix 'SumTy = Sum
+  -- FractionMatrix 'ProductTy = Product
+  -- FractionMatrix 'SumTy = Sum
 
-instance AsMatrix Product where
-  _Matrix = Control.Lens.iso getProduct Product . Control.Lens.iso Numeric.LinearAlgebra.HMatrix.scalar Numeric.LinearAlgebra.HMatrix.prodElements
-
-instance AsMatrix Sum where
-  _Matrix = Control.Lens.iso getSum Sum . Control.Lens.iso Numeric.LinearAlgebra.HMatrix.scalar Numeric.LinearAlgebra.HMatrix.sumElements
+-- instance AsMatrix Product where
+--   _Matrix = Control.Lens.iso getProduct Product . Control.Lens.iso Numeric.LinearAlgebra.HMatrix.scalar Numeric.LinearAlgebra.HMatrix.prodElements
+--
+-- instance AsMatrix Sum where
+--   _Matrix = Control.Lens.iso getSum Sum . Control.Lens.iso Numeric.LinearAlgebra.HMatrix.scalar Numeric.LinearAlgebra.HMatrix.sumElements
 
 -- | An 'Iso' between fraction-specific 'Matrix' and 'Matrix'.
 _FractionMatrix :: (AsMatrix (FractionMatrix ty), Container Vector a, Container Vector b, Element a, Element b) => Proxy ty -> Iso (FractionMatrix ty a) (FractionMatrix ty b) (Matrix a) (Matrix b)

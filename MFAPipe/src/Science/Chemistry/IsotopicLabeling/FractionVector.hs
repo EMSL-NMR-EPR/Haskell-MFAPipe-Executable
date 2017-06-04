@@ -59,7 +59,7 @@ import qualified Data.Injective
 import qualified Data.List.Extras
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict
-import           Data.Monoid (Product(..), Sum(..))
+-- import           Data.Monoid (Product(..), Sum(..))
 import           Data.Proxy (Proxy(..))
 import           Numeric.LinearAlgebra.HMatrix (Container(), IndexOf, Vector)
 import qualified Numeric.LinearAlgebra.HMatrix
@@ -82,14 +82,14 @@ import qualified Text.PrettyPrint.Leijen.Text
 type family FractionVector (ty :: FractionType) :: * -> * where
   FractionVector 'IsotopomerFractionTy = IsotopomerFractionVector
   FractionVector 'MassFractionTy = MassFractionVector
-  FractionVector 'ProductTy = Product
-  FractionVector 'SumTy = Sum
+  -- FractionVector 'ProductTy = Product
+  -- FractionVector 'SumTy = Sum
 
-instance AsVector Product where
-  _Vector = Control.Lens.iso getProduct Product . Control.Lens.iso Numeric.LinearAlgebra.HMatrix.scalar Numeric.LinearAlgebra.HMatrix.prodElements
-
-instance AsVector Sum where
-  _Vector = Control.Lens.iso getSum Sum . Control.Lens.iso Numeric.LinearAlgebra.HMatrix.scalar Numeric.LinearAlgebra.HMatrix.sumElements
+-- instance AsVector Product where
+--   _Vector = Control.Lens.iso getProduct Product . Control.Lens.iso Numeric.LinearAlgebra.HMatrix.scalar Numeric.LinearAlgebra.HMatrix.prodElements
+--
+-- instance AsVector Sum where
+--   _Vector = Control.Lens.iso getSum Sum . Control.Lens.iso Numeric.LinearAlgebra.HMatrix.scalar Numeric.LinearAlgebra.HMatrix.sumElements
 
 -- | An 'Iso' between fraction-specific 'Vector' and 'Vector'.
 _FractionVector :: (AsVector (FractionVector ty), Container Vector a, Container Vector b) => Proxy ty -> Iso (FractionVector ty a) (FractionVector ty b) (Vector a) (Vector b)
@@ -274,7 +274,7 @@ lookupMassFractionVector k ix = Data.Injective.inject (LookupFractionVector (Fra
 instance (FromFractionVectorPtr ty k, Pretty k, Pretty (FractionVectorPtrObject ty)) => Display (LookupFractionVectorF ty k) where
   displayAlg = pretty
 
-instance (AsVector (FractionVector ty), Ord i, Ord k, Container Vector e, Num (Vector e)) => FromDict i e (LookupFractionVectorF ty k) where
+instance (AsVector (FractionVector ty), Ord i, Ord k, Container Vector e, Num (Vector e), Num e) => FromDict i e (LookupFractionVectorF ty k) where
   type Dict (LookupFractionVectorF ty k) i = FractionVectorDict ty i k
   type DictError (LookupFractionVectorF ty k) i = FractionVectorDictError ty i k
   fromDictAlg dict (LookupFractionVector ptr) = runFractionVectorPtr ptr dict

@@ -69,7 +69,6 @@ import           System.Log.Data (MonadRecord(), Data, Lvl, Msg)
 import qualified System.Log.Simple
 import           Text.PrettyPrint.Leijen.Text (Pretty(pretty))
 import qualified Text.PrettyPrint.Leijen.Text
-import           Text.PrettyPrint.Leijen.Text.Instances ()
 import qualified Text.Printf
 
 -- | A FBA computation, where:

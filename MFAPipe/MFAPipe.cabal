@@ -1,0 +1,279 @@
+name:
+  MFAPipe
+version:
+  0.1.0.0
+synopsis:
+  Metabolic flux analysis and flux balance analysis
+description:
+  MFAPipe is a command line application for parallel labeling, steady state
+  Metabolic Flux Analysis (MFA) and Flux Balance Analysis (FBA), using the
+  stoichiometric paradigm and Elementary Metabolite Units (EMU) method.
+bug-reports:
+  https://jira.pnnl.gov/jira/projects/MB/issues
+license:
+  OtherLicense
+license-file:
+  LICENSE
+author:
+  Mark Borkum
+maintainer:
+  mark.borkum@pnnl.gov
+copyright:
+  2016-17 Pacific Northwest National Laboratory
+category:
+  Bioinformatics, Chemistry, Science
+build-type:
+  Simple
+extra-source-files:
+  README.md
+cabal-version:
+  >= 1.10
+source-repository head
+  type: git
+  location: git+https://stash.pnnl.gov/scm/mb/haskell-mfapipe-executable.git
+
+executable mfaPipe
+  main-is:
+    Main.hs
+
+  build-depends:
+    aeson,
+    attoparsec,
+    base,
+    bifunctors,
+    bytestring,
+    cassava,
+    cmdargs,
+    comonad,
+    containers,
+    data-default,
+    fgl,
+    glpk-hs,
+    hmatrix,
+    lens,
+    levmar,
+    logger,
+    MonadRandom,
+    monad-parallel,
+    mtl,
+    parallel,
+    profunctors,
+    random,
+    statistics,
+    text,
+    transformers,
+    unordered-containers,
+    vector,
+    wl-pprint-text,
+    zip-archive
+
+  other-modules:
+    Control.Comonad.Trans.Rall
+    Control.Monad.Random.Instances
+    Data.Functor.Classes.Monoid1
+    Data.Graph.Inductive.Graph.Extras.Node
+    Data.Graph.Inductive.Graph.Extras.Node.Strict
+    Data.Graph.Inductive.Graph.Instances
+    Data.Graph.Inductive.Graph.Lens
+    Data.Graph.Inductive.Query.DFS.EdgeSmoothing
+    Data.Graph.Inductive.Query.DFS.Subgraph
+    Data.Injective
+    Data.List.Extras
+    Data.Monoid.CartProduct
+    Data.Monoid.Conv
+    Data.Monoid.Conv2
+    Data.Monoid.EndoM
+    Data.Monoid.Kronecker
+    Language.FluxJS.Conversion.Text
+    Language.FluxJS.Types
+    Language.INCA.Constants
+    Language.INCA.Conversion.Text
+    Language.INCA.Parser.Text
+    Language.INCA.Types
+    MFAPipe.Banner
+    MFAPipe.Command
+    MFAPipe.Csv.Constants
+    MFAPipe.Csv.Types.ContributionMatrix
+    MFAPipe.Csv.Types.EMUReactionNetwork
+    MFAPipe.Csv.Types.Flux
+    MFAPipe.Csv.Types.FluxCovarianceMatrix
+    MFAPipe.Csv.Types.Info
+    MFAPipe.Csv.Types.IsotopomerFractionVector
+    MFAPipe.Csv.Types.JacobianMatrix
+    MFAPipe.Csv.Types.MassFractionVector
+    MFAPipe.Csv.Types.NullspaceMatrix
+    MFAPipe.Csv.Types.ObjectiveFunction
+    MFAPipe.Csv.Types.ReactionNetwork
+    MFAPipe.Csv.Types.Residual
+    MFAPipe.Csv.Types.Statistics
+    MFAPipe.Csv.Types.Stoichiometry
+    MFAPipe.FBA
+    MFAPipe.MFA
+    MFAPipe.Utils
+    MFAPipe.Version
+    MFAPipe.Warranty
+    Numeric.LevMar.Extras.LevMar
+    Numeric.LinearAlgebra.HMatrix.Algorithms.GaussJordan
+    Numeric.LinearAlgebra.HMatrix.Lens
+    Science.Chemistry.EMU
+    Science.Chemistry.EMU.EMU
+    Science.Chemistry.EMU.EMUGraph
+    Science.Chemistry.EMU.EMUReaction
+    Science.Chemistry.EMU.EMUReactionNetwork
+    Science.Chemistry.EMU.Factorized.Class
+    Science.Chemistry.EMU.HasSize.Class
+    Science.Chemistry.EMU.IsotopicLabeling.DSL.Evaluate.Class
+    Science.Chemistry.EMU.IsotopicLabeling.SteadyState
+    Science.Chemistry.EMU.Optimized.Class
+    Science.Chemistry.FluxVar
+    Science.Chemistry.IsotopicLabeling
+    Science.Chemistry.IsotopicLabeling.DSL.Display.Class
+    Science.Chemistry.IsotopicLabeling.DSL.FromDict.Class
+    Science.Chemistry.IsotopicLabeling.FractionMatrix
+    Science.Chemistry.IsotopicLabeling.FractionType
+    Science.Chemistry.IsotopicLabeling.FractionTypeDict
+    Science.Chemistry.IsotopicLabeling.FractionVector
+    Science.Chemistry.IsotopicLabeling.Isotopomer
+    Science.Chemistry.IsotopicLabeling.IsotopomerFractionMatrix
+    Science.Chemistry.IsotopicLabeling.IsotopomerFractionVector
+    Science.Chemistry.IsotopicLabeling.MassFraction
+    Science.Chemistry.IsotopicLabeling.MassFractionMatrix
+    Science.Chemistry.IsotopicLabeling.MassFractionVector
+    Science.Chemistry.IsotopicLabeling.SteadyState
+    Science.Chemistry.MetaboliteVar
+    Science.Chemistry.Parser.Text
+    Science.Chemistry.Reaction
+    Science.Chemistry.ReactionNetwork
+    Science.Chemistry.Stoichiometry
+    Science.Chemistry.Types
+    System.Log.Logger.Instances
+
+  ghc-options:
+    -Wall -fwarn-tabs -fdicts-cheap -funbox-strict-fields -fmax-simplifier-iterations=10
+
+  hs-source-dirs:
+    src
+
+  default-language:
+    Haskell2010
+
+library
+  build-depends:
+    aeson,
+    attoparsec,
+    base,
+    bifunctors,
+    bytestring,
+    cassava,
+    comonad,
+    containers,
+    data-default,
+    fgl,
+    glpk-hs,
+    hmatrix,
+    lens,
+    levmar,
+    logger,
+    mtl,
+    MonadRandom,
+    monad-parallel,
+    parallel,
+    profunctors,
+    random,
+    statistics,
+    text,
+    transformers,
+    vector,
+    unordered-containers,
+    wl-pprint-text,
+    zip-archive
+
+  exposed-modules:
+    Control.Comonad.Trans.Rall
+    Control.Monad.Random.Instances
+    Data.Functor.Classes.Monoid1
+    Data.Graph.Inductive.Graph.Extras.Node
+    Data.Graph.Inductive.Graph.Extras.Node.Strict
+    Data.Graph.Inductive.Graph.Instances
+    Data.Graph.Inductive.Graph.Lens
+    Data.Graph.Inductive.Query.DFS.EdgeSmoothing
+    Data.Graph.Inductive.Query.DFS.Subgraph
+    Data.Injective
+    Data.List.Extras
+    Data.Monoid.CartProduct
+    Data.Monoid.Conv
+    Data.Monoid.Conv2
+    Data.Monoid.EndoM
+    Data.Monoid.Kronecker
+    Language.FluxJS.Conversion.Text
+    Language.FluxJS.Types
+    Language.INCA.Constants
+    Language.INCA.Conversion.Text
+    Language.INCA.Parser.Text
+    Language.INCA.Types
+    MFAPipe.Banner
+    MFAPipe.Command
+    MFAPipe.Csv.Constants
+    MFAPipe.Csv.Types.ContributionMatrix
+    MFAPipe.Csv.Types.EMUReactionNetwork
+    MFAPipe.Csv.Types.Flux
+    MFAPipe.Csv.Types.FluxCovarianceMatrix
+    MFAPipe.Csv.Types.Info
+    MFAPipe.Csv.Types.IsotopomerFractionVector
+    MFAPipe.Csv.Types.JacobianMatrix
+    MFAPipe.Csv.Types.MassFractionVector
+    MFAPipe.Csv.Types.NullspaceMatrix
+    MFAPipe.Csv.Types.ObjectiveFunction
+    MFAPipe.Csv.Types.ReactionNetwork
+    MFAPipe.Csv.Types.Residual
+    MFAPipe.Csv.Types.Statistics
+    MFAPipe.Csv.Types.Stoichiometry
+    MFAPipe.FBA
+    MFAPipe.MFA
+    MFAPipe.Utils
+    MFAPipe.Version
+    MFAPipe.Warranty
+    Numeric.LevMar.Extras.LevMar
+    Numeric.LinearAlgebra.HMatrix.Algorithms.GaussJordan
+    Numeric.LinearAlgebra.HMatrix.Lens
+    Science.Chemistry.EMU
+    Science.Chemistry.EMU.EMU
+    Science.Chemistry.EMU.EMUGraph
+    Science.Chemistry.EMU.EMUReaction
+    Science.Chemistry.EMU.EMUReactionNetwork
+    Science.Chemistry.EMU.Factorized.Class
+    Science.Chemistry.EMU.HasSize.Class
+    Science.Chemistry.EMU.IsotopicLabeling.DSL.Evaluate.Class
+    Science.Chemistry.EMU.IsotopicLabeling.SteadyState
+    Science.Chemistry.EMU.Optimized.Class
+    Science.Chemistry.FluxVar
+    Science.Chemistry.IsotopicLabeling
+    Science.Chemistry.IsotopicLabeling.DSL.Display.Class
+    Science.Chemistry.IsotopicLabeling.DSL.FromDict.Class
+    Science.Chemistry.IsotopicLabeling.FractionMatrix
+    Science.Chemistry.IsotopicLabeling.FractionType
+    Science.Chemistry.IsotopicLabeling.FractionTypeDict
+    Science.Chemistry.IsotopicLabeling.FractionVector
+    Science.Chemistry.IsotopicLabeling.Isotopomer
+    Science.Chemistry.IsotopicLabeling.IsotopomerFractionMatrix
+    Science.Chemistry.IsotopicLabeling.IsotopomerFractionVector
+    Science.Chemistry.IsotopicLabeling.MassFraction
+    Science.Chemistry.IsotopicLabeling.MassFractionMatrix
+    Science.Chemistry.IsotopicLabeling.MassFractionVector
+    Science.Chemistry.IsotopicLabeling.SteadyState
+    Science.Chemistry.MetaboliteVar
+    Science.Chemistry.Parser.Text
+    Science.Chemistry.Reaction
+    Science.Chemistry.ReactionNetwork
+    Science.Chemistry.Stoichiometry
+    Science.Chemistry.Types
+    System.Log.Logger.Instances
+
+  ghc-options:
+    -Wall -fwarn-tabs -fdicts-cheap -funbox-strict-fields -fmax-simplifier-iterations=10
+
+  hs-source-dirs:
+    src
+
+  default-language:
+    Haskell2010

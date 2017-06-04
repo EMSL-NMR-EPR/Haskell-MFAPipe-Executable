@@ -128,7 +128,6 @@ import qualified System.Log.Simple
 import           System.Random (Random(), RandomGen())
 import           Text.PrettyPrint.Leijen.Text (Pretty(pretty))
 import qualified Text.PrettyPrint.Leijen.Text
-import           Text.PrettyPrint.Leijen.Text.Instances ()
 import qualified Text.Printf
 
 newtype MFA i k e = MFA
@@ -268,8 +267,8 @@ toMFA MFASpec{..} =
     ps0 :: Params Double
     ps0 = _mfaSpecInitialParams
 
-    mfaConstraints :: MFAConstraints (FluxVar Text Text) Double
-    mfaConstraints@MFAConstraints{..} = _mfaSpecMFAConstraints
+    _mfaConstraints :: MFAConstraints (FluxVar Text Text) Double
+    _mfaConstraints@MFAConstraints{..} = _mfaSpecMFAConstraints
 
     constraints :: Constraints Double
     constraints = Constraints lBs_Vector uBs_Vector ws_Vector linearConstraints_Matrix_Vector
@@ -314,8 +313,8 @@ toMFA MFASpec{..} =
         ps' :: Vector Double
         ps' = nullspace `Numeric.LinearAlgebra.HMatrix.app` ps
 
-        var_ps :: Vector Double
-        var_ps = Numeric.LinearAlgebra.HMatrix.takeDiag covar_ps
+        -- var_ps :: Vector Double
+        -- var_ps = Numeric.LinearAlgebra.HMatrix.takeDiag covar_ps
 
         covar_ys :: Matrix Double
         covar_ys = jac_ps `Numeric.LinearAlgebra.HMatrix.mul` covar_ps `Numeric.LinearAlgebra.HMatrix.mul` Numeric.LinearAlgebra.HMatrix.tr jac_ps
@@ -977,10 +976,10 @@ getRandomParamsM MFAConstraints{..} matrix0 = Numeric.LinearAlgebra.HMatrix.from
         return x
 
 -- | @mkLinearConstraints ks xs@ constructs a linear system @Ax = B@, where @A@ is a 'Matrix' and @B@ is a 'Vector'.
-mkLinearConstraints :: (Ord k, Container Vector a, Element a) => [k] -> [(Map k a, a)] -> (Matrix a, Vector a)
+mkLinearConstraints :: (Ord k, Container Vector a, Element a, Num a) => [k] -> [(Map k a, a)] -> (Matrix a, Vector a)
 mkLinearConstraints ks0 = bimap Numeric.LinearAlgebra.HMatrix.fromRows Numeric.LinearAlgebra.HMatrix.fromList . unzip . Data.Maybe.mapMaybe (uncurry (mkLinearConstraint ks0))
   where
-    mkLinearConstraint :: (Ord k, Container Vector a) => [k] -> Map k a -> a -> Maybe (Vector a, a)
+    mkLinearConstraint :: (Ord k, Container Vector a, Num a) => [k] -> Map k a -> a -> Maybe (Vector a, a)
     mkLinearConstraint ks m x = fmap (flip (,) x) (mkVectorWithDefault ks Nothing 0 m)
 
 -- | @mkVectorWithDefault ks mx0 x0 m@ attempts to construct a 'Vector' of the elements of @m@ with respect to @ks@, @mx0@ and @x0@.

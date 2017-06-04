@@ -81,5 +81,5 @@ instance (Pretty i, Pretty k, Pretty a) => Pretty (ReactionNetwork i k a) where
 -- @toStoichiometricModel s@ is the 'Dense' stoichiometric model obtained by asserting the stoichiometry of each chemical reaction in @s@.
 --
 -- Note: This function does not guarantee that the stoichiometry of the result is balanced.
-toStoichiometricModel :: (Ord i, HasStoichiometry k (Reaction k a), MutableStoichiometricModel i k (Sparse i k), Container Vector e) => ReactionNetwork i k a -> Dense i k e
+toStoichiometricModel :: (Ord i, HasStoichiometry k (Reaction k a), MutableStoichiometricModel i k (Sparse i k), Container Vector e, Fractional e) => ReactionNetwork i k a -> Dense i k e
 toStoichiometricModel = sparseToDense . flip mapAccumStoichiometricModel mempty . Data.Map.Strict.toAscList . getReactionNetwork

@@ -51,15 +51,15 @@ toSteadyStateEMU is0 = SteadyState . Control.Parallel.Strategies.parMap Control.
     toSteadyStateStepEMU is gr =
       let
         labNodesMap = Data.Graph.Inductive.Graph.Extras.Node.Strict.partitionLabNodes gr
-        
+
         ~(isolatedNodes, isolatedNodeLabs) = unzip (Data.Map.Strict.findWithDefault [] Isolated labNodesMap)
         ~(sourceNodes, sourceNodeLabs) = unzip (Data.Map.Strict.findWithDefault [] Source labNodesMap)
         ~(sinkNodes, sinkNodeLabs) = unzip (Data.Map.Strict.findWithDefault [] Sink labNodesMap)
         ~(intermediateNodes, intermediateNodeLabs) = unzip (Data.Map.Strict.findWithDefault [] Intermediate labNodesMap)
-        
+
         notSinkNodes = isolatedNodes ++ intermediateNodes ++ sourceNodes
         notSinkNodeLabs = isolatedNodeLabs ++ intermediateNodeLabs ++ sourceNodeLabs
-        
+
         mkVectorMaybe iMap
           | Data.Map.Strict.null iMap = Nothing
           | otherwise =
@@ -69,18 +69,18 @@ toSteadyStateEMU is0 = SteadyState . Control.Parallel.Strategies.parMap Control.
                 if Numeric.LinearAlgebra.HMatrix.sumElements vector == 0
                   then Nothing
                   else Just vector
-        
+
         notSinkAssocMatrix = mapMaybe go (pure (,) <*> (zip (enumFromThen 0 1) notSinkNodes) <*> (zip (enumFromThen 0 1) notSinkNodes))
           where
             go ~((rowIx, rowNode), (columnIx, columnNode))
               | rowNode == columnNode = (,) (rowIx, columnIx) <$> mkVectorMaybe (foldr (\ ~(_, _, (Sum (MixingProbability (Product p)), i)) -> Data.Map.Strict.insertWith (+) i (fromRational (negate p))) Data.Map.Strict.empty                                                        (Data.Graph.Inductive.Graph.out gr columnNode))
               | otherwise             = (,) (rowIx, columnIx) <$> mkVectorMaybe (foldr (\ ~(_, _, (Sum (MixingProbability (Product p)), i)) -> Data.Map.Strict.insertWith (+) i (fromRational         p))  Data.Map.Strict.empty (filter (\ ~(otherNode, _, _) -> rowNode == otherNode) (Data.Graph.Inductive.Graph.inn gr columnNode)))
-        
+
         sinkAssocMatrix = mapMaybe go (pure (,) <*> (zip (enumFromThen 0 1) notSinkNodes) <*> (zip (enumFromThen 0 1) sinkNodes))
           where
             go ~((rowIx, rowNode), (columnIx, columnNode))
               | otherwise             = (,) (rowIx, columnIx) <$> mkVectorMaybe (foldr (\ ~(_, _, (Sum (MixingProbability (Product p)), i)) -> Data.Map.Strict.insertWith (+) i (fromRational (negate p))) Data.Map.Strict.empty (filter (\ ~(otherNode, _, _) -> rowNode == otherNode) (Data.Graph.Inductive.Graph.inn gr columnNode)))
-        
+
         mkPartialDerivativeAssocMatrices assocs = Data.Map.Strict.fromAscList (filter (not . null . snd) (map (\ ~(vectorIx, i) -> (i, mapMaybe (\ ~(matrixIx, vector) -> let x = Numeric.LinearAlgebra.HMatrix.atIndex vector vectorIx in if x == 0 then Nothing else Just (matrixIx, x)) assocs)) (zip (enumFromThen 0 1) is)))
       in
         SteadyStateStep
@@ -94,7 +94,7 @@ toSteadyStateEMU is0 = SteadyState . Control.Parallel.Strategies.parMap Control.
           }
 
 toFractionVectorDictEMU
-  :: (Ord i, Ord k, Container Vector e, Eq e, Num e, AsVector (FractionVector ty), Monoid (FractionVector ty e), Num (Vector e))
+  :: (Ord i, Ord k, Container Vector e, Eq e, Fractional e, AsVector (FractionVector ty), Monoid (FractionVector ty e), Num (Vector e))
   => Proxy ty
   -> Int
   -> Set i
@@ -108,7 +108,7 @@ toFractionVectorDictEMU proxy0 base0 ixs0 m0 =
     FractionVectorDict proxy0 kMap ikMap
   where
     mkValues
-      :: (Ord k, Container Vector e, Eq e, Num e, AsVector (FractionVector ty), Monoid (FractionVector ty e), Num (Vector e))
+      :: (Ord k, Container Vector e, Eq e, Fractional e, AsVector (FractionVector ty), Monoid (FractionVector ty e), Num (Vector e))
       => Proxy ty
       -> Int
       -> Map k [(Rational, Matrix e)]
@@ -124,7 +124,7 @@ toFractionVectorDictEMU proxy0 base0 ixs0 m0 =
               where
                 mkEMU k2 = first (\xs -> EMU base [(k2, AtomIxSet xs)]) . foldMap (first Data.IntSet.singleton)
     mkSensitivities
-      :: (Ord i, Ord k, Container Vector e, Eq e, Num e, AsVector (FractionVector ty))
+      :: (Ord i, Ord k, Container Vector e, Fractional e, Num e, AsVector (FractionVector ty))
       => Proxy ty
       -> Set i
       -> Map (EMU k) (FractionVector ty e)
