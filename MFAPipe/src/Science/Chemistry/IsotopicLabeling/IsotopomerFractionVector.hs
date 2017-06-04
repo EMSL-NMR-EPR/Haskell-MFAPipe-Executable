@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 -----------------------------------------------------------------------------
@@ -22,7 +21,6 @@ module Science.Chemistry.IsotopicLabeling.IsotopomerFractionVector
 ) where
 
 import qualified Control.Lens
-import           Data.Functor.Classes.Monoid1 (Monoid1(..))
 import           Data.Monoid.CartProduct (CartProduct(..))
 import           Numeric.LinearAlgebra.HMatrix (Container(), Product(), Vector)
 import           Numeric.LinearAlgebra.HMatrix.Lens (AsVector(..))
@@ -36,15 +34,6 @@ instance (Container Vector e, Num (Vector e), Product e) => Monoid (IsotopomerFr
   {-# INLINE mempty #-}
   (IsotopomerFractionVector mL) `mappend` (IsotopomerFractionVector mR) = IsotopomerFractionVector (mL `mappend` mR)
   {-# INLINE mappend #-}
-
-instance Monoid1 IsotopomerFractionVector where
-  type Monoid1Ty IsotopomerFractionVector e = (Container Vector e, Num (Vector e), Product e)
-  mempty1 = mempty
-  {-# INLINE mempty1 #-}
-  mappend1 = mappend1
-  {-# INLINE mappend1 #-}
-  mconcat1 = mconcat1
-  {-# INLINE mconcat1 #-}
 
 instance AsVector IsotopomerFractionVector where
   _Vector = Control.Lens.iso getIsotopomerFractionVector IsotopomerFractionVector . _Vector

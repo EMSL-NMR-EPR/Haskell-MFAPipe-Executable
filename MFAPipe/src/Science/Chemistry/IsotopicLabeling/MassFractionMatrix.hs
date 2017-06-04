@@ -1,6 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 -----------------------------------------------------------------------------
@@ -23,7 +22,6 @@ module Science.Chemistry.IsotopicLabeling.MassFractionMatrix
 ) where
 
 import qualified Control.Lens
-import           Data.Functor.Classes.Monoid1 (Monoid1(..))
 import           Data.Monoid.Conv2 (Conv2(..))
 import           Numeric.LinearAlgebra.HMatrix (Container(), Product(), Vector)
 import           Numeric.LinearAlgebra.HMatrix.Lens (AsMatrix(..))
@@ -39,15 +37,6 @@ instance (Container Vector e, Num (Vector e), Product e) => Monoid (MassFraction
   {-# INLINE mempty #-}
   (MassFractionMatrix mL) `mappend` (MassFractionMatrix mR) = MassFractionMatrix (mL `mappend` mR)
   {-# INLINE mappend #-}
-
-instance Monoid1 MassFractionMatrix where
-  type Monoid1Ty MassFractionMatrix e = (Container Vector e, Num (Vector e), Product e)
-  mempty1 = mempty
-  {-# INLINE mempty1 #-}
-  mappend1 = mappend1
-  {-# INLINE mappend1 #-}
-  mconcat1 = mconcat1
-  {-# INLINE mconcat1 #-}
 
 instance AsMatrix MassFractionMatrix where
   _Matrix = Control.Lens.iso getMassFractionMatrix MassFractionMatrix . _Matrix

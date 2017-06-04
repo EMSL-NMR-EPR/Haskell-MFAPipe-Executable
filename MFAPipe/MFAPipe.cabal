@@ -72,7 +72,6 @@ executable mfaPipe
     zip-archive
 
   other-modules:
-    Data.Functor.Classes.Monoid1
     Data.Graph.Inductive.Graph.Extras.Node
     Data.Graph.Inductive.Graph.Extras.Node.Strict
     Data.Graph.Inductive.Graph.Instances
@@ -194,7 +193,6 @@ library
     zip-archive
 
   exposed-modules:
-    Data.Functor.Classes.Monoid1
     Data.Graph.Inductive.Graph.Extras.Node
     Data.Graph.Inductive.Graph.Extras.Node.Strict
     Data.Graph.Inductive.Graph.Instances
