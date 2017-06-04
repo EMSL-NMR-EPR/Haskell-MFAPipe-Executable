@@ -15,6 +15,7 @@ packages:
 - fgl-instances
 - fgl-lens
 - hmatrix-algorithms-gauss-jordan
+- hmatrix-lens
 - hmatrix-monoids
 - logger-instances
 
