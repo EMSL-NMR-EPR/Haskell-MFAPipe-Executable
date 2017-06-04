@@ -57,6 +57,7 @@ executable mfaPipe
     glpk-hs,
     hmatrix,
     hmatrix-algorithms-gauss-jordan,
+    hmatrix-monoids,
     lens,
     levmar,
     logger,
@@ -81,10 +82,6 @@ executable mfaPipe
   other-modules:
     Data.Injective
     Data.List.Extras
-    Data.Monoid.CartProduct
-    Data.Monoid.Conv
-    Data.Monoid.Conv2
-    Data.Monoid.Kronecker
     Language.FluxJS.Conversion.Text
     Language.FluxJS.Types
     Language.INCA.Constants
@@ -177,6 +174,7 @@ library
     glpk-hs,
     hmatrix,
     hmatrix-algorithms-gauss-jordan,
+    hmatrix-monoids,
     lens,
     levmar,
     logger,
@@ -201,10 +199,6 @@ library
   exposed-modules:
     Data.Injective
     Data.List.Extras
-    Data.Monoid.CartProduct
-    Data.Monoid.Conv
-    Data.Monoid.Conv2
-    Data.Monoid.Kronecker
     Language.FluxJS.Conversion.Text
     Language.FluxJS.Types
     Language.INCA.Constants
