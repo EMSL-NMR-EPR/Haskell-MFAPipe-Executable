@@ -1,0 +1,22 @@
+name:                fgl-algorithms-edge-smoothing
+version:             0.1.0.0
+-- synopsis:
+-- description:
+-- homepage:
+license:             OtherLicense
+license-file:        LICENSE
+author:              Mark Borkum
+maintainer:          mark.borkum@pnnl.gov
+copyright:           2016-17 Pacific Northwest National Laboratory
+category:            System
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Data.Graph.Inductive.Query.DFS.EdgeSmoothing
+  build-depends:       base >= 4.7 && < 5
+                     , fgl == 5.5.3.1
+                     , fgl-extras
+  default-language:    Haskell2010

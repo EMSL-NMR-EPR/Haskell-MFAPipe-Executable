@@ -48,6 +48,11 @@ executable mfaPipe
     containers,
     data-default,
     fgl,
+    fgl-algorithms-edge-smoothing,
+    fgl-algorithms-subgraph,
+    fgl-extras,
+    fgl-instances,
+    fgl-lens,
     glpk-hs,
     hmatrix,
     lens,
@@ -72,12 +77,6 @@ executable mfaPipe
     zip-archive
 
   other-modules:
-    Data.Graph.Inductive.Graph.Extras.Node
-    Data.Graph.Inductive.Graph.Extras.Node.Strict
-    Data.Graph.Inductive.Graph.Instances
-    Data.Graph.Inductive.Graph.Lens
-    Data.Graph.Inductive.Query.DFS.EdgeSmoothing
-    Data.Graph.Inductive.Query.DFS.Subgraph
     Data.Injective
     Data.List.Extras
     Data.Monoid.CartProduct
@@ -169,6 +168,11 @@ library
     containers,
     data-default,
     fgl,
+    fgl-algorithms-edge-smoothing,
+    fgl-algorithms-subgraph,
+    fgl-extras,
+    fgl-instances,
+    fgl-lens,
     glpk-hs,
     hmatrix,
     lens,
@@ -193,12 +197,6 @@ library
     zip-archive
 
   exposed-modules:
-    Data.Graph.Inductive.Graph.Extras.Node
-    Data.Graph.Inductive.Graph.Extras.Node.Strict
-    Data.Graph.Inductive.Graph.Instances
-    Data.Graph.Inductive.Graph.Lens
-    Data.Graph.Inductive.Query.DFS.EdgeSmoothing
-    Data.Graph.Inductive.Query.DFS.Subgraph
     Data.Injective
     Data.List.Extras
     Data.Monoid.CartProduct
