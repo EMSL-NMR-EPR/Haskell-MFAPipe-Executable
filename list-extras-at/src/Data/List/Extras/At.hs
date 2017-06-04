@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.List.Extras
+-- Module      :  Data.List.Extras.At
 -- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
@@ -11,7 +11,7 @@
 -- This module exports assorted functions that relate to lists.
 -----------------------------------------------------------------------------
 
-module Data.List.Extras
+module Data.List.Extras.At
 ( -- * Searching lists
   -- ** Searching by index
   partitionAt
@@ -20,9 +20,6 @@ module Data.List.Extras
 , deleteAt
   -- ** Ordered lists
 , insertAt
-  -- * List zippers
-, zipperA
-, zipperA2
 ) where
 
 -- | The 'partitionAt' function takes a list of indices and a list, and returns the pair of lists of elements which are and arn't at the specified indices.
@@ -68,17 +65,3 @@ insertAt = go 0
       | otherwise = a : go (n0 + 1) ns0 as
     {-# INLINE go #-}
 {-# INLINE insertAt #-}
-
-zipperA :: [a] -> [([a], a, [a])]
-zipperA [] = []
-zipperA (r0:rs0) = let z0 = ([], r0, rs0) in z0 : go z0
-  where
-    go :: ([a], a, [a]) -> [([a], a, [a])]
-    go ( _, _,   []) = []
-    go (ls, l, r:rs) = let z = (l:ls, r, rs) in z : go z
-    {-# INLINE go #-}
-{-# INLINE zipperA #-}
-
-zipperA2 :: [a] -> [b] -> [([b], a, [b])]
-zipperA2 as bs = zipWith (\(_asL, a, _asR) (bsL, _b, bsR) -> (bsL, a, bsR)) (zipperA as) (zipperA bs)
-{-# INLINE zipperA2 #-}

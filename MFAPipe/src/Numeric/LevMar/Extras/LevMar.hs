@@ -38,7 +38,7 @@ module Numeric.LevMar.Extras.LevMar
 import           Control.Applicative (liftA2)
 import           Control.Lens (Iso', _1, _3)
 import qualified Control.Lens
-import qualified Data.List.Extras
+import qualified Data.List.Extras.At
 import           Data.Profunctor (dimap, lmap)
 import qualified Data.Set
 import           Foreign.Storable (Storable())
@@ -115,7 +115,7 @@ fixParams rs0 (LevMar done model mJac ps ys (Constraints lBs uBs ws linFunc)) =
       where
         f (matrix0, vector0) =
           let
-            (columnsAt, columnsNotAt) = Data.List.Extras.partitionAt indices (Control.Lens.review (Control.Lens.mapping _List . _Columns) matrix0)
+            (columnsAt, columnsNotAt) = Data.List.Extras.At.partitionAt indices (Control.Lens.review (Control.Lens.mapping _List . _Columns) matrix0)
             matrixAt = Control.Lens.view (Control.Lens.mapping _List . _Columns) columnsAt
             matrixNotAt = Control.Lens.view (Control.Lens.mapping _List . _Columns) columnsNotAt
             vector1 = vector0 - Numeric.LinearAlgebra.HMatrix.app matrixAt (Numeric.LinearAlgebra.HMatrix.fromList values)
@@ -125,18 +125,18 @@ fixParams rs0 (LevMar done model mJac ps ys (Constraints lBs uBs ws linFunc)) =
     LevMar new_done new_model new_mJac new_ps ys (Constraints new_lBs new_uBs new_ws new_linFunc)
   where
     deleteAtParams :: (Storable r) => [IndexOf Vector] -> Params r -> Params r
-    deleteAtParams = Control.Lens.under _List . Data.List.Extras.deleteAt
+    deleteAtParams = Control.Lens.under _List . Data.List.Extras.At.deleteAt
     insertAtParams :: (Storable r) => [(IndexOf Vector, r)] -> Params r -> Params r
-    insertAtParams = Control.Lens.under _List . Data.List.Extras.insertAt
+    insertAtParams = Control.Lens.under _List . Data.List.Extras.At.insertAt
     deleteAtColumns :: (Element a) => [IndexOf Vector] -> Matrix a -> Matrix a
-    deleteAtColumns = Control.Lens.under (Control.Lens.mapping _List . _Columns) . Data.List.Extras.deleteAt
+    deleteAtColumns = Control.Lens.under (Control.Lens.mapping _List . _Columns) . Data.List.Extras.At.deleteAt
     -- insertAtColumns :: (Element a) => [(IndexOf Vector, [a])] -> Matrix a -> Matrix a
-    -- insertAtColumns = Control.Lens.under (Control.Lens.mapping _List . _Columns) . Data.List.Extras.insertAt
+    -- insertAtColumns = Control.Lens.under (Control.Lens.mapping _List . _Columns) . Data.List.Extras.At.insertAt
     insertAtColumnsAndRows :: (Element a, Num a) => IndexOf Vector -> [IndexOf Vector] -> Matrix a -> Matrix a
     insertAtColumnsAndRows size0 indices0 = liftA2 (.) (f _Columns size0) (f _Rows (size0 - length indices0)) indices0
       where
         f :: (Element a, Num a) => Iso' [Vector a] (Matrix a) -> Int -> [IndexOf Vector] -> Matrix a -> Matrix a
-        f l n = Control.Lens.under (Control.Lens.mapping _List . l) . Data.List.Extras.insertAt . map (flip (,) (replicate n 0))
+        f l n = Control.Lens.under (Control.Lens.mapping _List . l) . Data.List.Extras.At.insertAt . map (flip (,) (replicate n 0))
 
 -- | @weightedWith c ws levmar@ is the weighted 'Model' and 'Jacobian' obtained by subtracting 'Samples' from the result of 'Model' in @levmar@ (denoted @rs@), and then applying @c@ to each pair of @ws@ and @rs@.
 --

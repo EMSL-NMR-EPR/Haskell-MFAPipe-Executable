@@ -63,6 +63,8 @@ executable mfaPipe
     injective-numeric,
     lens,
     levmar,
+    list-extras-at,
+    list-extras-zipper,
     logger,
     logger-instances,
     MonadRandom,
@@ -83,7 +85,6 @@ executable mfaPipe
     zip-archive
 
   other-modules:
-    Data.List.Extras
     Language.FluxJS.Conversion.Text
     Language.FluxJS.Types
     Language.INCA.Constants
@@ -181,6 +182,8 @@ library
     injective-numeric,
     lens,
     levmar,
+    list-extras-at,
+    list-extras-zipper,
     logger,
     logger-instances,
     mtl,
@@ -201,7 +204,6 @@ library
     zip-archive
 
   exposed-modules:
-    Data.List.Extras
     Language.FluxJS.Conversion.Text
     Language.FluxJS.Types
     Language.INCA.Constants

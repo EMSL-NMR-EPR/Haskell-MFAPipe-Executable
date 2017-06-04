@@ -19,6 +19,8 @@ packages:
 - hmatrix-monoids
 - injective
 - injective-numeric
+- list-extras-at
+- list-extras-zipper
 - logger-instances
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)

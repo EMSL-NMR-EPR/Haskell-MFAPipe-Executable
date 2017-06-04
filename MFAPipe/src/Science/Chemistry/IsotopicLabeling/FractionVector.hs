@@ -56,7 +56,7 @@ import           Data.Bifunctor (Bifunctor(bimap))
 import           Data.Functor.Classes (Eq1(..), Ord1(..), Read1(..), Show1(..))
 import           Data.Injective ((:<:)(), Fix)
 import qualified Data.Injective
-import qualified Data.List.Extras
+import qualified Data.List.Extras.Zipper
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict
 -- import           Data.Monoid (Product(..), Sum(..))
@@ -154,7 +154,7 @@ lookupFractionVectorDict'
   -> k
   -> FractionVectorDict ty i k e
   -> m [FractionVector ty e]
-lookupFractionVectorDict' i k0 (FractionVectorDict proxy kMap ikMap) = mapM f (Data.List.Extras.zipperA (factors k0))
+lookupFractionVectorDict' i k0 (FractionVectorDict proxy kMap ikMap) = mapM f (Data.List.Extras.Zipper.zipper (factors k0))
   where
     f (ksL, k, ksR) = do
       new_ksL <- mapM (\kL -> maybe (Control.Monad.Except.throwError (FractionVectorNotFound (FractionVectorPtr proxy kL (-1)))) return (Data.Map.Strict.lookup kL kMap)) ksL
