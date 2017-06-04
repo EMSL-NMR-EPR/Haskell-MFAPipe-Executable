@@ -29,8 +29,9 @@ import           Control.Monad.Trans.Except (ExceptT)
 import qualified Control.Monad.Trans.Except
 import           Data.Functor.Product (Product(..))
 import           Data.Functor.Sum (Sum(..))
-import           Data.Injective (Fix, FloatingF(..), FractionalF(..), NumF(..))
+import           Data.Injective (Fix)
 import qualified Data.Injective
+import           Data.Injective.Numeric (FloatingF(..), FractionalF(..), NumF(..))
 
 class (Ord i, Functor f) => FromDict i e f where
   type Dict f i :: * -> *

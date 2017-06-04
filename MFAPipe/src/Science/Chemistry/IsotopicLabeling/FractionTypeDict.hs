@@ -70,8 +70,9 @@ module Science.Chemistry.IsotopicLabeling.FractionTypeDict
 
 import qualified Data.Foldable
 import           Data.Functor.Sum (Sum(..))
-import           Data.Injective (Fix, FloatingF(..), FractionalF(..), NumF(..))
+import           Data.Injective (Fix)
 import qualified Data.Injective
+import           Data.Injective.Numeric (FloatingF(..), FractionalF(..), NumF(..))
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict
 import           Data.Set (Set)

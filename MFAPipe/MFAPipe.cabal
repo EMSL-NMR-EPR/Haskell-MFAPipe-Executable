@@ -59,6 +59,8 @@ executable mfaPipe
     hmatrix-algorithms-gauss-jordan,
     hmatrix-lens,
     hmatrix-monoids,
+    injective,
+    injective-numeric,
     lens,
     levmar,
     logger,
@@ -81,7 +83,6 @@ executable mfaPipe
     zip-archive
 
   other-modules:
-    Data.Injective
     Data.List.Extras
     Language.FluxJS.Conversion.Text
     Language.FluxJS.Types
@@ -176,6 +177,8 @@ library
     hmatrix-algorithms-gauss-jordan,
     hmatrix-lens,
     hmatrix-monoids,
+    injective,
+    injective-numeric,
     lens,
     levmar,
     logger,
@@ -198,7 +201,6 @@ library
     zip-archive
 
   exposed-modules:
-    Data.Injective
     Data.List.Extras
     Language.FluxJS.Conversion.Text
     Language.FluxJS.Types

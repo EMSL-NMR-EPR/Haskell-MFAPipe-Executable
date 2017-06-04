@@ -2,14 +2,12 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE Rank2Types #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Injective
+-- Module      :  Data.Injective.Numeric
 -- Copyright   :  2016-17 Pacific Northwest National Laboratory
 -- License     :  ECL-2.0 (see the LICENSE file in the distribution)
 --
@@ -29,87 +27,17 @@
 --
 -----------------------------------------------------------------------------
 
-module Data.Injective
-( -- * The ':<:' class
-  (:<:)(..)
-  -- * Fixed points
-, Fix(..)
-  -- * Natural transformations
-, hoist
-  -- * Folding
-, inject
-, project
-, cata
-  -- * Numeric types
-, NumF(..)
-, FractionalF(..)
-, FloatingF(..)
-) where
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+module Data.Injective.Numeric
+  ( -- * Numeric types
+    NumF(..)
+  , FractionalF(..)
+  , FloatingF(..)
+  ) where
 
 import           Data.Functor.Classes (Eq1(..), Ord1(..), Read1(..), Show1(..))
-import           Data.Functor.Sum (Sum(..))
-
--- | The ':<:' class is used for types that can be injected into other types.
-class (Functor sub, Functor sup) => (:<:) sub sup where
-  -- | Inject sub-type into super-type.
-  inj :: sub a -> sup a
-  -- | Project super-type into sub-type.
-  prj :: sup a -> Maybe (sub a)
-
-instance (Functor f) => f :<: f where
-  inj = id
-  {-# INLINE inj #-}
-  prj = Just
-  {-# INLINE prj #-}
-
-instance {-# OVERLAPPING #-} (Functor f, Functor g) => f :<: (f `Sum` g) where
-  inj = InL
-  {-# INLINE inj #-}
-  prj (InL x) = Just x
-  prj _ = Nothing
-  {-# INLINE prj #-}
-
-instance {-# OVERLAPPING #-} (Functor f, Functor g, Functor h, f :<: h) => f :<: (g `Sum` h) where
-  inj = InR . inj
-  {-# INLINE inj #-}
-  prj (InR x) = prj x
-  prj _ = Nothing
-  {-# INLINE prj #-}
-
--- | Least fixed-point of a 'Functor'.
-newtype Fix f = In { out :: f (Fix f) }
-
-deriving instance Eq (f (Fix f)) => Eq (Fix f)
-deriving instance Ord (f (Fix f)) => Ord (Fix f)
-deriving instance Read (f (Fix f)) => Read (Fix f)
-deriving instance Show (f (Fix f)) => Show (Fix f)
-
--- | Natural transformation.
-hoist :: (Functor g) => (forall x. f x -> g x) -> Fix f -> Fix g
-hoist nat = In . fmap (hoist nat) . nat . out
-{-# INLINE hoist #-}
-
--- | Inject sub-type into super-type.
-inject :: (f :<: g) => f (Fix g) -> Fix g
-inject = In . inj
-{-# INLINE inject #-}
-
--- | Project super-type into sub-type.
-project :: (f :<: g) => Fix g -> Maybe (f (Fix g))
-project = prj . out
-{-# INLINE project #-}
-
--- | Catamorphism.
-cata
-  :: (Functor f)
-  => (f a -> a)
-  -- ^ @f@-algebra
-  -> Fix f
-  -- ^ fixed point
-  -> a
-  -- ^ result
-cata alg = alg . fmap (cata alg) . out
-{-# INLINE cata #-}
+import           Data.Injective ((:<:)(), Fix)
+import qualified Data.Injective
 
 -- | Free 'Functor' for 'Num' class.
 data NumF a
@@ -139,19 +67,19 @@ instance Show1 NumF where
   {-# INLINE showsPrec1 #-}
 
 instance (NumF :<: f) => Num (Fix f) where
-  xL + xR = inject (Add xL xR)
+  xL + xR = Data.Injective.inject (Add xL xR)
   {-# INLINE (+) #-}
-  xL - xR = inject (Subtract xL xR)
+  xL - xR = Data.Injective.inject (Subtract xL xR)
   {-# INLINE (-) #-}
-  xL * xR = inject (Multiply xL xR)
+  xL * xR = Data.Injective.inject (Multiply xL xR)
   {-# INLINE (*) #-}
-  negate x = inject (Negate x)
+  negate x = Data.Injective.inject (Negate x)
   {-# INLINE negate #-}
-  abs x = inject (Abs x)
+  abs x = Data.Injective.inject (Abs x)
   {-# INLINE abs #-}
-  signum x = inject (Signum x)
+  signum x = Data.Injective.inject (Signum x)
   {-# INLINE signum #-}
-  fromInteger n = inject (FromInteger n)
+  fromInteger n = Data.Injective.inject (FromInteger n)
   {-# INLINE fromInteger #-}
 
 -- | Free 'Functor' for 'Fractional' class.
@@ -178,11 +106,11 @@ instance Show1 FractionalF where
   {-# INLINE showsPrec1 #-}
 
 instance (NumF :<: f, FractionalF :<: f) => Fractional (Fix f) where
-  xL / xR = inject (Divide xL xR)
+  xL / xR = Data.Injective.inject (Divide xL xR)
   {-# INLINE (/) #-}
-  recip x = inject (Recip x)
+  recip x = Data.Injective.inject (Recip x)
   {-# INLINE recip #-}
-  fromRational n = inject (FromRational n)
+  fromRational n = Data.Injective.inject (FromRational n)
   {-# INLINE fromRational #-}
 
 -- | Free 'Functor' for 'Floating' class.
@@ -224,39 +152,39 @@ instance Show1 FloatingF where
   {-# INLINE showsPrec1 #-}
 
 instance (NumF :<: f, FractionalF :<: f, FloatingF :<: f) => Floating (Fix f) where
-  pi = inject Pi
+  pi = Data.Injective.inject Pi
   {-# INLINE pi #-}
-  exp x = inject (Exp x)
+  exp x = Data.Injective.inject (Exp x)
   {-# INLINE exp #-}
-  log x = inject (Log x)
+  log x = Data.Injective.inject (Log x)
   {-# INLINE log #-}
-  sqrt x = inject (Sqrt x)
+  sqrt x = Data.Injective.inject (Sqrt x)
   {-# INLINE sqrt #-}
-  xL ** xR = inject (Power xL xR)
+  xL ** xR = Data.Injective.inject (Power xL xR)
   {-# INLINE (**) #-}
-  logBase xL xR = inject (LogBase xL xR)
+  logBase xL xR = Data.Injective.inject (LogBase xL xR)
   {-# INLINE logBase #-}
-  sin x = inject (Sin x)
+  sin x = Data.Injective.inject (Sin x)
   {-# INLINE sin #-}
-  cos x = inject (Cos x)
+  cos x = Data.Injective.inject (Cos x)
   {-# INLINE cos #-}
-  tan x = inject (Tan x)
+  tan x = Data.Injective.inject (Tan x)
   {-# INLINE tan #-}
-  asin x = inject (ArcSin x)
+  asin x = Data.Injective.inject (ArcSin x)
   {-# INLINE asin #-}
-  acos x = inject (ArcCos x)
+  acos x = Data.Injective.inject (ArcCos x)
   {-# INLINE acos #-}
-  atan x = inject (ArcTan x)
+  atan x = Data.Injective.inject (ArcTan x)
   {-# INLINE atan #-}
-  sinh x = inject (Sinh x)
+  sinh x = Data.Injective.inject (Sinh x)
   {-# INLINE sinh #-}
-  cosh x = inject (Cosh x)
+  cosh x = Data.Injective.inject (Cosh x)
   {-# INLINE cosh #-}
-  tanh x = inject (Tanh x)
+  tanh x = Data.Injective.inject (Tanh x)
   {-# INLINE tanh #-}
-  asinh x = inject (ArcSinh x)
+  asinh x = Data.Injective.inject (ArcSinh x)
   {-# INLINE asinh #-}
-  acosh x = inject (ArcCosh x)
+  acosh x = Data.Injective.inject (ArcCosh x)
   {-# INLINE acosh #-}
-  atanh x = inject (ArcTanh x)
+  atanh x = Data.Injective.inject (ArcTanh x)
   {-# INLINE atanh #-}

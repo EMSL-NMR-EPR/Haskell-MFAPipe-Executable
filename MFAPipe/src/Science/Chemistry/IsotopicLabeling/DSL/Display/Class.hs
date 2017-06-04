@@ -23,8 +23,9 @@ module Science.Chemistry.IsotopicLabeling.DSL.Display.Class
 
 import           Data.Csv (ToField(toField))
 import           Data.Functor.Sum (Sum(..))
-import           Data.Injective (Fix, FloatingF(..), FractionalF(..), NumF(..))
+import           Data.Injective (Fix)
 import qualified Data.Injective
+import           Data.Injective.Numeric (FloatingF(..), FractionalF(..), NumF(..))
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy
 import           Text.PrettyPrint.Leijen.Text (Pretty(..), Doc, (<>), (<+>))

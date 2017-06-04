@@ -25,7 +25,8 @@ import qualified Data.Foldable
 import           Data.Functor.Product (Product(..))
 import           Data.Functor.Sum (Sum(..))
 import           Data.Graph.Inductive.Query.DFS.EdgeSmoothing (Smoothable())
-import           Data.Injective (Fix, FloatingF(..), FractionalF(..), NumF(..))
+import           Data.Injective (Fix)
+import           Data.Injective.Numeric (FloatingF(..), FractionalF(..), NumF(..))
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict
 import           Data.Proxy (Proxy(..))

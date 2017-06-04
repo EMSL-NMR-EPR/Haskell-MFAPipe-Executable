@@ -17,6 +17,8 @@ packages:
 - hmatrix-algorithms-gauss-jordan
 - hmatrix-lens
 - hmatrix-monoids
+- injective
+- injective-numeric
 - logger-instances
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
