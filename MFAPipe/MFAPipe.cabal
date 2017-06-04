@@ -53,6 +53,7 @@ executable mfaPipe
     fgl-extras,
     fgl-instances,
     fgl-lens,
+    foldl,
     glpk-hs,
     hmatrix,
     lens,
@@ -82,7 +83,6 @@ executable mfaPipe
     Data.Monoid.CartProduct
     Data.Monoid.Conv
     Data.Monoid.Conv2
-    Data.Monoid.EndoM
     Data.Monoid.Kronecker
     Language.FluxJS.Conversion.Text
     Language.FluxJS.Types
@@ -173,6 +173,7 @@ library
     fgl-extras,
     fgl-instances,
     fgl-lens,
+    foldl,
     glpk-hs,
     hmatrix,
     lens,
@@ -202,7 +203,6 @@ library
     Data.Monoid.CartProduct
     Data.Monoid.Conv
     Data.Monoid.Conv2
-    Data.Monoid.EndoM
     Data.Monoid.Kronecker
     Language.FluxJS.Conversion.Text
     Language.FluxJS.Types

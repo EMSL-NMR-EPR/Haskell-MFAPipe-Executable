@@ -16,6 +16,7 @@ module Science.Chemistry.EMU.IsotopicLabeling.DSL.Evaluate.Class
 
 import           Control.Applicative (Const(..))
 import           Control.Comonad.Trans.Rall (runRallT)
+import           Control.Foldl (EndoM(..))
 import           Control.Monad.Parallel (MonadParallel())
 import           Control.Monad.Trans.Except (ExceptT(..), withExceptT)
 import           Control.Monad.Trans.Reader (ReaderT(..), mapReaderT)
@@ -27,7 +28,6 @@ import           Data.Graph.Inductive.Query.DFS.EdgeSmoothing (Smoothable())
 import           Data.Injective (Fix, FloatingF(..), FractionalF(..), NumF(..))
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict
-import           Data.Monoid.EndoM (EndoM(..))
 import           Data.Proxy (Proxy(..))
 import           Data.Set (Set)
 import qualified Data.Set

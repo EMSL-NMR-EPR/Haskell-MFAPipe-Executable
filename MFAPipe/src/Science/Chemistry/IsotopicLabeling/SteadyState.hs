@@ -11,6 +11,7 @@ module Science.Chemistry.IsotopicLabeling.SteadyState
 , runSteadyStateStep
 ) where
 
+import           Control.Foldl (EndoM(..))
 import qualified Control.Lens
 import           Control.Monad (foldM)
 import           Control.Monad.Error.Class (MonadError())
@@ -22,7 +23,6 @@ import qualified Control.Parallel.Strategies
 import           Data.Bifunctor (second)
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict
-import           Data.Monoid.EndoM (EndoM(..))
 import           Data.Proxy (Proxy(..))
 import           Numeric.LinearAlgebra.HMatrix (Field(), Numeric(), IndexOf, Matrix, Vector)
 import qualified Numeric.LinearAlgebra.HMatrix
