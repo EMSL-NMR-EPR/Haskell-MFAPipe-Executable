@@ -59,7 +59,7 @@ The stoichiometry matrix for the modified model is
 
 | | b<sub>1</sub> | b<sub>2</sub> | b<sub>3</sub> | b<sub>4</sub> | v<sub>1</sub> | v<sub>2</sub> | v<sub>3</sub> | v<sub>4</sub> | v<sub>5</sub> | v<sub>6</sub> | v<sub>7</sub> | v<sub>8</sub> |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| **AKG** | 0 | | 0 | | 0 | | 0 | | 0 | | 1 | | -1 | | -1 | | 0 | | 0 | | 0 | | 0 |
+| **AKG** | 0 | 0 | 0 | 0 | 0 | 1 | -1 | -1 | 0 | 0 | 0 | 0 |
 | **AcCoA** | 1 | 0 | 0 | 0 | -1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | **Asp** | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | -1 |
 | **CO2** | 0 | 0 | -1 | 0 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
