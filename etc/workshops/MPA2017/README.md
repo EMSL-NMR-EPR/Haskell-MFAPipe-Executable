@@ -33,7 +33,7 @@ The citric acid cycle (also known as the tricarboxylic acid cycle or the Krebs c
 
 The model is depicted in Figure 1. The model is depicted as a network, where: vertices are labeled with abbreviations for metabolites; and, edges are labeled with metabolic flux variables and their expected values. Metabolic flux variables are denoted "v<sub>n</sub>", where n is an identifier. Edges represent either: irreversible reactions; or, left-to-right or right-to-left directions of reversible reactions (with respect to the arrow). For example, the edge labeled "v<sub>5</sub>" represents an irreversible reaction, and the edges labeled "v<sub>6</sub>" and "v<sub>7</sub>" represent the two directions of a reversible reaction.
 
-> ![Figure 1](https://raw.githubusercontent.com/EMSL-NMR-EPR/Haskell-MFAPipe-Executable/master/workshops/MPA2017/fig1.jpg)
+> ![Figure 1](https://raw.githubusercontent.com/EMSL-NMR-EPR/Haskell-MFAPipe-Executable/master/etc/workshops/MPA2017/fig1.jpg)
 >
 > **Figure 1.** Simplified model of the tricarboxylic acid cycle. Abbreviations of metabolites: OAC, oxaloacetate; Asp, aspartate; AcCoA, acetyl coenzyme A; Cit, citrate; AKG, &alpha;-ketoglutarate; Glu, glutamate; Fum, fumarate. Suc, succinate. The assumed fluxes have arbitrary units.
 >
@@ -41,7 +41,7 @@ The model is depicted in Figure 1. The model is depicted as a network, where: ve
 
 Stoichiometry and atom transitions for the model are given in Figure 2.
 
-> ![Figure 2](https://raw.githubusercontent.com/EMSL-NMR-EPR/Haskell-MFAPipe-Executable/master/workshops/MPA2017/fig2.png)
+> ![Figure 2](https://raw.githubusercontent.com/EMSL-NMR-EPR/Haskell-MFAPipe-Executable/master/etc/workshops/MPA2017/fig2.png)
 >
 > **Figure 2.** Stoichiometry and atom transitions for reactions of the TCA cycle.
 
@@ -49,7 +49,7 @@ Figure and caption reproduced from [Antoniewicz et al., 2007, Tbl. 5](http://www
 
 The modified model is depicted in Figure 3. Two modifications are made: First, exchange reactions from the original model are moved to the "intracellular" major-body fluid compartment of the organelle. Second, "extracellular" metabolites and corresponding reactions are added to the model to describe substrate uptake and product transport. By convention (see Rios and Lange, 2007), metabolic flux variables for transport reactions are denoted "b<sub>n</sub>", where n is an identifier.
 
-> ![Figure 3](https://raw.githubusercontent.com/EMSL-NMR-EPR/Haskell-MFAPipe-Executable/master/workshops/MPA2017/fig3.png)
+> ![Figure 3](https://raw.githubusercontent.com/EMSL-NMR-EPR/Haskell-MFAPipe-Executable/master/etc/workshops/MPA2017/fig3.png)
 >
 > **Figure 3.** Modified version of Figure 1.
 
@@ -165,11 +165,11 @@ Data is reproduced from [Antoniewicz et al., 2007, Sec. 3.2](http://www.scienced
 
 [Borkum et al., 2017](https://link.springer.com/article/10.1186/s13321-017-0201-7) gives a method for fitting the values of metabolic flux variables to NMR data, where NMR-derived expressions are representations of the conditional probability of observation given detection. (The formulation is shown to be backwards compatible with MS-derived expressions if it is assumed that the probability of detection of an MS-derived observation is always equal to unity.)
 
-![Equation 1](https://raw.githubusercontent.com/EMSL-NMR-EPR/Haskell-MFAPipe-Executable/master/workshops/MPA2017/eqn1.gif)
+![Equation 1](https://raw.githubusercontent.com/EMSL-NMR-EPR/Haskell-MFAPipe-Executable/master/etc/workshops/MPA2017/eqn1.gif)
 
 The chemical structure of glutamate is depicted in Figure 4.
 
-> ![Figure 4](https://raw.githubusercontent.com/EMSL-NMR-EPR/Haskell-MFAPipe-Executable/master/workshops/MPA2017/fig4.png)
+> ![Figure 4](https://raw.githubusercontent.com/EMSL-NMR-EPR/Haskell-MFAPipe-Executable/master/etc/workshops/MPA2017/fig4.png)
 >
 > **Figure 4.** Depiction of the chemical structure of glutamate. The carbon atoms of glutamate are numbered according to IUPAC convention.
 
