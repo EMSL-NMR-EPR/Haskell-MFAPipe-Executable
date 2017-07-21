@@ -8,7 +8,7 @@ The following workshop was developed for [Metabolic Pathways Analysis 2017](http
 
 * [GLPK](https://www.gnu.org/software/glpk/)
 * [Git](https://git-scm.com/)
-* [The Haskell Tool Stack](https://git-scm.com/)
+* [The Haskell Tool Stack](http://haskellstack.org/)
 
 **Note:**
 On macOS, GLPK can be installed using the `homebrew/science/glpk` package for [Homebrew](https://brew.sh/).
