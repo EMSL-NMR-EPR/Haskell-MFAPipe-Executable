@@ -68,7 +68,7 @@ The stoichiometry matrix for the modified model is
 | **Glu** | 0 | 0 | 0 | -1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | **OAC** | 0 | 0 | 0 | 0 | -1 | 0 | 0 | 0 | 0 | 1 | -1 | 1 |
 | **Suc** | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | -1 | 0 | 0 | 0 |
-| <td colspan=6 style="text-align:center;">&uarr; Intracellular</td><td colspan="6" style="text-align:center;">&darr; Extracellular</td>
+| &uarr; Intracellular<br/><br/>Extracellular &darr; | | | | | | | | | | | | |
 | **AcCoA** | -1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | **Asp** | 0 | -1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | **CO2** | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
