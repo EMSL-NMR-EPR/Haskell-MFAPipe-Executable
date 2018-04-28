@@ -377,13 +377,12 @@ toMFA MFASpec{..} =
           , _mfaResultInfo = info
           }
 
-    levmar0, levmar1, levmar2, levmar3 :: LevMar Double (Params Double, Info Double, Matrix Double)
+    levmar0, levmar1, levmar2 :: LevMar Double (Params Double, Info Double, Matrix Double)
     levmar0 = Numeric.LevMar.Extras.LevMar.levmar model mJac ps0 ys constraints
     levmar1@(LevMar _ mkWeightedResiduals (Just mkWeightedJacobian) _ _ _) = Numeric.LevMar.Extras.LevMar.weighted sigmas levmar0
-    levmar2 = Numeric.LevMar.Extras.LevMar.boxConstraints (_mfaConstraintsDefaultLowerBound, _mfaConstraintsDefaultUpperBound) _mfaConstraintsDefaultWeight (snd (_denseIntermediate _mfaSpecReactionNetworkDense)) levmar1
-    levmar3 = Numeric.LevMar.Extras.LevMar.fixParams ascList levmar2
+    levmar2 = Numeric.LevMar.Extras.LevMar.fixParams ascList levmar1
   in
-    case fmap (\(ps, info, covar_ps) -> toMFAResult ps covar_ps (mkWeightedResiduals ps) (mkWeightedJacobian ps) info) levmar3 of
+    case fmap (\(ps, info, covar_ps) -> toMFAResult ps covar_ps (mkWeightedResiduals ps) (mkWeightedJacobian ps) info) levmar2 of
       LevMar new_done new_model new_mJac new_ps0 new_ys new_constraints -> MFA (Numeric.LevMar.Extras.LevMar.runLevMar (LevMar new_done (new_model . (\x -> unsafePerformIO (hPutChar stdout 'x' >> hFlush stdout >> return x))) (fmap (\f -> f . (\x -> unsafePerformIO (hPutChar stdout 'J' >> hFlush stdout >> return x))) new_mJac) new_ps0 new_ys new_constraints))
 
 toMFASpec
