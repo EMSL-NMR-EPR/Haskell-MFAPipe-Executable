@@ -17,11 +17,6 @@ import           Data.ByteString (ByteString)
 import qualified Data.Text
 import qualified Data.Text.Encoding
 
--- | The field name for degrees of freedom.
-cDegreesOfFreedomFieldName :: Data.ByteString.ByteString
-cDegreesOfFreedomFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Degrees of Freedom")
-{-# INLINE cDegreesOfFreedomFieldName #-}
-
 -- | The field name for EMUs.
 cEMUFieldName :: Data.ByteString.ByteString
 cEMUFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "EMU")
@@ -76,16 +71,6 @@ cFluxVarianceFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Metaboli
 cFreeVarFieldName :: ByteString
 cFreeVarFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Independent Variable")
 {-# INLINE cFreeVarFieldName #-}
-
--- | The field name for variances of values of independent metabolic flux variables counts.
-cIndependentFluxesCount :: ByteString
-cIndependentFluxesCount = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Independent Variables Count")
-{-# INLINE cIndependentFluxesCount #-}
-
--- | The field name for variances of values of independent measurement counts.
-cIndependentMeasurementsCount :: ByteString
-cIndependentMeasurementsCount = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Independent Measurements Count")
-{-# INLINE cIndependentMeasurementsCount #-}
 
 -- | The field naem for Kolmogorov-Smirnov statistics.
 cKolmogorovSmirnovDFieldName :: ByteString
@@ -152,11 +137,6 @@ cReactionTypeFBA :: ByteString
 cReactionTypeFBA = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "fba")
 {-# INLINE cReactionTypeFBA #-}
 
--- | The field name for reduced chi-square.
-cReducedChiSquare :: ByteString
-cReducedChiSquare = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Reduced Chi-Square")
-{-# INLINE cReducedChiSquare #-}
-
 cTolerance :: ByteString
 cTolerance = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Tolerance (Uniform Norm)")
 {-# INLINE cTolerance #-}
@@ -174,10 +154,6 @@ cWeightedResidualVarianceFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pa
 cWeightedRSquareFieldName :: ByteString
 cWeightedRSquareFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Weighted R-Square")
 {-# INLINE cWeightedRSquareFieldName #-}
-
-cWeightedRSquareAdjustedFieldName :: ByteString
-cWeightedRSquareAdjustedFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Weighted R-Square (Adjusted)")
-{-# INLINE cWeightedRSquareAdjustedFieldName #-}
 
 cWeightedSSEFieldName :: ByteString
 cWeightedSSEFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Weighted SSE")

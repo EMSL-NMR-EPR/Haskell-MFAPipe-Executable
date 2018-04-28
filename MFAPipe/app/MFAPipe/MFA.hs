@@ -186,8 +186,6 @@ data MFAResult i k e = MFAResult
   , _mfaResultResidualSSE' :: e
   , _mfaResultResidualSST :: Map Text e
   , _mfaResultResidualSST' :: e
-  , _mfaResultResidualReducedChiSquare :: Map Text e
-  , _mfaResultResidualReducedChiSquare' :: e
   , _mfaResultJacobianMatrix :: Map Text (Map (EMUExpr k) [Map i e])
   , _mfaResultContributionMatrix :: Map Text (Map (EMUExpr k) [Map i e])
   , _mfaResultDict :: Map Text (Dict (EMUExprF k) i e)
@@ -245,10 +243,8 @@ toMFA MFASpec{..} =
             fromLists :: (Storable e) => [[e]] -> Vector e
             fromLists = Numeric.LinearAlgebra.HMatrix.vjoin . map Numeric.LinearAlgebra.HMatrix.fromList
 
-    nullspace :: Matrix Double
-    nullspace = _nullspaceKernelGaussJordan _mfaSpecReactionNetworkNullspace
-
-    -- nullspace_tr :: Matrix Double
+    -- nullspace, nullspace_tr :: Matrix Double
+    -- nullspace = _nullspaceKernelGaussJordan _mfaSpecReactionNetworkNullspace
     -- nullspace_tr = Numeric.LinearAlgebra.HMatrix.tr nullspace
 
     gr :: EMUGraph (FluxVar Text Text) (MetaboliteVar Text)
@@ -350,11 +346,6 @@ toMFA MFASpec{..} =
               var_ys_j = var_ys `Numeric.LinearAlgebra.HMatrix.atIndex` j
             return (m_ij / (var_ps_i * var_ys_j))
 
-        degreesOfFreedom :: Int
-        degreesOfFreedom = fromInteger (subtract (_mfaParallelLabelingExperimentIndependentFluxVarsCount _mfaSpecMFAParallelLabelingExperiment) (_mfaParallelLabelingExperimentIndependentMeasurementsCount _mfaSpecMFAParallelLabelingExperiment))
-        degreesOfFreedom_Map :: Map Text Int
-        degreesOfFreedom_Map = Data.Map.Strict.map (fromInteger . subtract (_mfaParallelLabelingExperimentIndependentFluxVarsCount _mfaSpecMFAParallelLabelingExperiment) . _mfaSingleLabelingExperimentIndependentMeasurementsCount) (_mfaParallelLabelingExperimentSingleLabelingExperiments _mfaSpecMFAParallelLabelingExperiment)
-
         measurementCounts :: Map Text [(EMUExpr (MetaboliteVar Text), Int)]
         measurementCounts = Data.Map.Strict.map (map (second length) . Data.Map.Strict.toAscList . _mfaSingleLabelingExperimentMeasurements) (_mfaParallelLabelingExperimentSingleLabelingExperiments _mfaSpecMFAParallelLabelingExperiment)
 
@@ -393,11 +384,6 @@ toMFA MFASpec{..} =
         mean_ys = Statistics.Sample.mean ys
         sst_Map = Data.Map.Strict.intersectionWith (\sigmas' ys' -> sum (zipWith (\sigma' y' -> sigma' * y' * y') (concatMap snd sigmas') ys')) sigmas_Map (Data.Map.Strict.intersectionWith (\ys' mean' -> map (subtract mean') (concatMap snd ys')) ys_Map mean_ys_Map)
         sst = sigmas `Numeric.LinearAlgebra.HMatrix.dot` (Numeric.LinearAlgebra.HMatrix.cmap (\y' -> y' * y') (Numeric.LinearAlgebra.HMatrix.cmap (\y' -> y' - mean_ys) ys))
-
-        reduced_chi2_Map :: Map Text Double
-        reduced_chi2 :: Double
-        reduced_chi2_Map = Data.Map.Strict.intersectionWith (\chi2 dof -> chi2 / fromIntegral dof) (Data.Map.Strict.intersectionWith (\ys' vars' -> sum (zipWith (\y var -> (y * y) / var) (concatMap snd ys') (concatMap snd vars'))) new_ys_Map var_ys_Map) degreesOfFreedom_Map
-        reduced_chi2 = sum (zipWith (\y var -> (y * y) / var) new_ys_List var_ys_List) / fromIntegral degreesOfFreedom
       in
         MFAResult
           -- { _mfaResultFlux = ps'_Map
@@ -410,14 +396,12 @@ toMFA MFASpec{..} =
           , _mfaResultResidualVariance = Data.Map.Strict.map Data.Map.Strict.fromList var_ys_Map
           , _mfaResultResidualMeanVariance = Data.Map.Strict.map (Statistics.Sample.meanVariance . Data.Vector.Unboxed.fromList . concatMap snd) new_ys_Map
           , _mfaResultResidualMeanVariance' = Statistics.Sample.meanVariance (Data.Vector.Unboxed.fromList new_ys_List)
-          , _mfaResultResidualKolmogorovSmirnov = Data.Map.Strict.intersectionWith (\ndf -> doKolmogorovSmirnov ndf . Data.Vector.Unboxed.fromList . concatMap snd) degreesOfFreedom_Map new_ys_Map
-          , _mfaResultResidualKolmogorovSmirnov' = doKolmogorovSmirnov degreesOfFreedom (Data.Vector.Unboxed.fromList new_ys_List)
+          , _mfaResultResidualKolmogorovSmirnov = Data.Map.Strict.map (doKolmogorovSmirnov . Data.Vector.Unboxed.fromList . concatMap snd) new_ys_Map
+          , _mfaResultResidualKolmogorovSmirnov' = doKolmogorovSmirnov (Data.Vector.Unboxed.fromList new_ys_List)
           , _mfaResultResidualSSE = sse_Map
           , _mfaResultResidualSSE' = sse
           , _mfaResultResidualSST = sst_Map
           , _mfaResultResidualSST' = sst
-          , _mfaResultResidualReducedChiSquare = reduced_chi2_Map
-          , _mfaResultResidualReducedChiSquare' = reduced_chi2
           -- , _mfaResultJacobianMatrix = fromMatrixRows jac_ps'
           , _mfaResultJacobianMatrix = fromMatrixRows jac_ps
           , _mfaResultContributionMatrix = fromMatrixRows contrib
@@ -664,8 +648,9 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
         dictMap :: Map Text (FractionTypeDict (EMU (MetaboliteVar Text)) (IndexOf Vector))
         dictMap = Data.Map.Strict.map (fractionTypeDictEMU . Data.Map.Strict.keysSet . snd) m0
         independentFluxVarsCount :: Integer
-        independentFluxVarsCount = toInteger (Numeric.LinearAlgebra.HMatrix.cols _nullspaceKernelGaussJordan - Data.Map.Strict.size _mfaConstraintsEqualities)
+        -- independentFluxVarsCount = toInteger (Numeric.LinearAlgebra.HMatrix.cols _nullspaceKernelGaussJordan - Data.Map.Strict.size _mfaConstraintsEqualities)
         -- independentFluxVarsCount = toInteger (Data.Set.size _denseReactionIndices - Data.Map.Strict.size _mfaConstraintsEqualities)
+        independentFluxVarsCount = toInteger freeVarsCount
         independentMeasurementsCount :: Integer
         independentMeasurementsCount = toInteger (Science.Chemistry.IsotopicLabeling.FractionTypeDict.size (Data.Map.Strict.foldr mappend mempty dictMap))
       in
@@ -767,10 +752,6 @@ toArchiveWith opts modtime MFASpec{..} MFAResult{..} = do
   let
     ixs = _denseReactionIndices _mfaSpecReactionNetworkDense
     measurements = Data.Map.Strict.map _mfaSingleLabelingExperimentMeasurements (_mfaParallelLabelingExperimentSingleLabelingExperiments _mfaSpecMFAParallelLabelingExperiment)
-    degreesOfFreedom = fromInteger (subtract (_mfaParallelLabelingExperimentIndependentFluxVarsCount _mfaSpecMFAParallelLabelingExperiment) (_mfaParallelLabelingExperimentIndependentMeasurementsCount _mfaSpecMFAParallelLabelingExperiment))
-    degreesOfFreedom_Map = Data.Map.Strict.map (fromInteger . subtract (_mfaParallelLabelingExperimentIndependentFluxVarsCount _mfaSpecMFAParallelLabelingExperiment) . _mfaSingleLabelingExperimentIndependentMeasurementsCount) (_mfaParallelLabelingExperimentSingleLabelingExperiments _mfaSpecMFAParallelLabelingExperiment)
-    independentMeasurements = fromInteger (_mfaParallelLabelingExperimentIndependentMeasurementsCount _mfaSpecMFAParallelLabelingExperiment)
-    independentMeasurements_Map = Data.Map.Strict.map (fromInteger . _mfaSingleLabelingExperimentIndependentMeasurementsCount) (_mfaParallelLabelingExperimentSingleLabelingExperiments _mfaSpecMFAParallelLabelingExperiment)
 
   -- "./reaction_network/reaction.csv"
   System.Log.Simple.debug "[1] Chemical reaction network"
@@ -891,7 +872,7 @@ toArchiveWith opts modtime MFASpec{..} MFAResult{..} = do
         statisticsFilePath :: FilePath
         statisticsFilePath = Text.Printf.printf "result/statistics.csv"
         statisticsCsv :: ByteString
-        statisticsCsv = MFAPipe.Csv.Types.Statistics.encodeWith opts (StatisticsRecords (_nullspaceTolerance_Inf _mfaSpecReactionNetworkNullspace) (_mfaResultResidualMeanVariance', _mfaResultResidualMeanVariance) (_mfaResultResidualKolmogorovSmirnov', _mfaResultResidualKolmogorovSmirnov) (degreesOfFreedom, degreesOfFreedom_Map) (independentMeasurements, independentMeasurements_Map) (_mfaResultResidualSSE', _mfaResultResidualSSE) (_mfaResultResidualSST', _mfaResultResidualSST) (_mfaResultResidualReducedChiSquare', _mfaResultResidualReducedChiSquare))
+        statisticsCsv = MFAPipe.Csv.Types.Statistics.encodeWith opts (StatisticsRecords (_nullspaceTolerance_Inf _mfaSpecReactionNetworkNullspace) (_mfaResultResidualMeanVariance', _mfaResultResidualMeanVariance) (_mfaResultResidualKolmogorovSmirnov', _mfaResultResidualKolmogorovSmirnov) (_mfaResultResidualSSE', _mfaResultResidualSSE) (_mfaResultResidualSST', _mfaResultResidualSST))
 
   -- "./result/residual.csv"
   System.Log.Simple.debug "[12] Weighted residuals"
@@ -958,8 +939,8 @@ toArchiveWith opts modtime MFASpec{..} MFAResult{..} = do
   -- Fin!
   return archive
 
-doKolmogorovSmirnov :: Int -> Sample -> (Double, Double)
-doKolmogorovSmirnov _ndf xs =
+doKolmogorovSmirnov :: Sample -> (Double, Double)
+doKolmogorovSmirnov xs =
   let
     d = Statistics.Test.KolmogorovSmirnov.kolmogorovSmirnovCdfD (Statistics.Distribution.cumulative dist) xs
     p = Statistics.Test.KolmogorovSmirnov.kolmogorovSmirnovProbability (Data.Vector.Unboxed.length xs) d
