@@ -117,7 +117,7 @@ runCommand (DoMFAUsingLevMar input output seed0 itMax0 optScaleInitMu0 optStopNo
         Control.Monad.IO.Class.liftIO System.Exit.exitFailure
       Right (FluxJS.Document _modelMetadata model) -> do
         System.Log.Simple.info "FluxJS document was decoded successfully!"
-        void $ doMFA model (System.Random.mkStdGen seed0) itMax0 (Opts optScaleInitMu0 optStopNormInfJacTe0 optStopNorm2Dp0 optStopNorm2E0 optDelta0) $ \archive -> do
+        void $ doMFA model seed0 (System.Random.mkStdGen seed0) itMax0 (Opts optScaleInitMu0 optStopNormInfJacTe0 optStopNorm2Dp0 optStopNorm2E0 optDelta0) $ \archive -> do
           System.Log.Simple.info (Text.Printf.printf "Writing zip archive to file \"%s\"" output)
           Control.Monad.IO.Class.liftIO (System.IO.withBinaryFile output WriteMode (\hdl -> Data.ByteString.Lazy.hPut hdl (Codec.Archive.Zip.fromArchive archive)))
           System.Log.Simple.info "Zip archive was written successfully!"
@@ -163,8 +163,8 @@ runCommand (DoFBAUsingMIP input output tmLim0 presolve0) = do
           System.Log.Simple.info "Zip archive was written successfully!"
         Control.Monad.IO.Class.liftIO System.Exit.exitSuccess
 
-doMFA :: (RandomGen g, MonadIO m, MonadError e m, MonadRecord (System.Log.Data.Data Lvl, (System.Log.Data.Data Msg, ())) m, Show e) => FluxJS.Model Double -> g -> Int -> Options Double -> (Archive -> m b) -> m (b, g)
-doMFA model g0 itMax opts k = do
+doMFA :: (RandomGen g, MonadIO m, MonadError e m, MonadRecord (System.Log.Data.Data Lvl, (System.Log.Data.Data Msg, ())) m, Show e) => FluxJS.Model Double -> Int -> g -> Int -> Options Double -> (Archive -> m b) -> m (b, g)
+doMFA model seed0 g0 itMax opts k = do
   System.Log.Simple.info "Constructing MFA simulation"
   (e, g1) <- flip Control.Monad.Random.runRandT g0 (Control.Monad.Trans.Except.runExceptT (MFAPipe.MFA.toMFASpec model) `Control.Monad.Error.Class.catchError` \err -> do
     -- TODO pretty
@@ -178,6 +178,7 @@ doMFA model g0 itMax opts k = do
     Right mfaSpec -> do
       System.Log.Simple.info "MFA simulation was constructed successfully!"
       System.Log.Simple.info "Executing MFA simulation"
+      System.Log.Simple.warning (Text.Printf.printf "Using seed for random number generator: %d)" seed0)
       e' <- return (MFAPipe.MFA.runMFA (MFAPipe.MFA.toMFA mfaSpec) itMax opts) `Control.Monad.Error.Class.catchError` \err -> do
         -- TODO pretty
         System.Log.Simple.error (show err)
