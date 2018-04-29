@@ -41,6 +41,7 @@ import qualified Control.Monad.Trans.Except
 import qualified Data.Aeson
 import qualified Data.ByteString.Lazy
 import           Data.Data (Data())
+import qualified Data.IORef
 import           Data.LinearProgram.GLPK.Solver (GLPOpts(..), ReturnCode(..))
 import qualified Data.LinearProgram.GLPK.Solver
 import           Data.Typeable (Typeable())
@@ -179,7 +180,8 @@ doMFA model seed0 g0 itMax opts k = do
       System.Log.Simple.info "MFA simulation was constructed successfully!"
       System.Log.Simple.info "Executing MFA simulation"
       System.Log.Simple.warning (Text.Printf.printf "Using seed for random number generator: %d)" seed0)
-      e' <- return (MFAPipe.MFA.runMFA (MFAPipe.MFA.toMFA mfaSpec) itMax opts) `Control.Monad.Error.Class.catchError` \err -> do
+      (mfaParamsRef, mfa) <- Control.Monad.IO.Class.liftIO (MFAPipe.MFA.toMFA mfaSpec)
+      e' <- return (MFAPipe.MFA.runMFA mfa itMax opts) `Control.Monad.Error.Class.catchError` \err -> do
         -- TODO pretty
         System.Log.Simple.error (show err)
         Control.Monad.IO.Class.liftIO System.Exit.exitFailure
@@ -190,7 +192,8 @@ doMFA model seed0 g0 itMax opts k = do
           Control.Monad.IO.Class.liftIO System.Exit.exitFailure
         Right mfaResult -> do
           mfaResult `seq` System.Log.Simple.info "MFA simulation was executed successfully!"
-          archive <- MFAPipe.MFA.toArchive 0 mfaSpec mfaResult
+          mfaParamsSeq <- Control.Monad.IO.Class.liftIO (Data.IORef.readIORef mfaParamsRef)
+          archive <- MFAPipe.MFA.toArchive 0 mfaSpec mfaResult mfaParamsSeq
           fmap (\x -> (x, g1)) (k archive)
 
 doFBA :: (MonadIO m, MonadError e m, MonadRecord (System.Log.Data.Data Lvl, (System.Log.Data.Data Msg, ())) m, Show e) => FluxJS.Model Double -> GLPOpts -> (Archive -> m b) -> m b

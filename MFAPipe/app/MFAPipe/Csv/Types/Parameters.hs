@@ -39,4 +39,4 @@ toHeader (ParametersRecords ixs _xss) = Data.Csv.header $
   : GHC.Exts.build (\cons nil -> Data.Set.foldr (\ix -> cons (Data.Csv.toField ix)) nil ixs)
 
 toList :: ParametersRecords i e -> [ParametersRecord i e]
-toList (ParametersRecords ixs xss) = zipWith (ParametersRecord ixs) (enumFromThen 1 2) xss
+toList (ParametersRecords ixs xss) = zipWith (ParametersRecord ixs) (enumFromThen 0 1) xss

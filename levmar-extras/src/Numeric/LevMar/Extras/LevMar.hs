@@ -26,6 +26,8 @@ module Numeric.LevMar.Extras.LevMar
   LevMar(..)
 , levmar
 , runLevMar
+  -- * Unsafe IO operations
+, unsafeWithLevMarIO
   -- * Utilities
   -- ** Box constraints
 , boxConstraints
@@ -47,6 +49,7 @@ import qualified Numeric.LevMar
 import           Numeric.LinearAlgebra.HMatrix (Container(), Element(), Numeric(), IndexOf, Matrix, Vector)
 import qualified Numeric.LinearAlgebra.HMatrix
 import           Numeric.LinearAlgebra.HMatrix.Lens (_Columns, _List, _Rows)
+import           System.IO.Unsafe (unsafePerformIO)
 
 -- | A minimization using the Levenberg-Marquardt algorithm.
 data LevMar r a = LevMar
@@ -68,6 +71,19 @@ levmar = LevMar id
 runLevMar :: (LevMarable r) => LevMar r a -> Int -> Options r -> Either LevMarError a
 runLevMar (LevMar done model mJac ps ys constraints) itMax opts = fmap done (Numeric.LevMar.levmar model mJac ps ys itMax opts constraints)
 {-# INLINE runLevMar #-}
+
+unsafeWithLevMarIO
+  :: (Params r -> IO s)
+  -> (s -> Model r -> Params r -> IO (Samples r))
+  -> (s -> Jacobian r -> Params r -> IO (Matrix r))
+  -> LevMar r a
+  -> IO (s, LevMar r a)
+unsafeWithLevMarIO newSt withModelSt withJacobianSt (LevMar done model mJacobian ps0 ys0 constraints) = do
+  s0 <- newSt ps0
+  let
+    new_model = unsafePerformIO . withModelSt s0 model
+    new_mJacobian = fmap (\jacobian -> unsafePerformIO . withJacobianSt s0 jacobian) mJacobian
+  return (s0, LevMar done new_model new_mJacobian ps0 ys0 constraints)
 
 boxConstraints :: (Show r, Container Vector r, Numeric r, Ord r) => (r, r) -> r -> Matrix r -> LevMar r a -> LevMar r a
 boxConstraints ~(lo, hi) w nullspace0 (LevMar done model mJac ps0 ys0 (Constraints lBs uBs ws linFunc)) =

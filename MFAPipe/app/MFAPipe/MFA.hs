@@ -52,15 +52,20 @@ import qualified Data.ByteString.Lazy
 import           Data.Csv (ToField(), EncodeOptions)
 import qualified Data.Csv
 import qualified Data.Either
+import           Data.Foldable (toList)
 import           Data.Functor.Product (Product(..))
 import qualified Data.HashMap.Strict
 import           Data.IntMap.Strict (IntMap)
 import qualified Data.IntMap.Strict
+import           Data.IORef (IORef)
+import qualified Data.IORef
 import qualified Data.List
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict
 import qualified Data.Maybe
 import           Data.Proxy (Proxy(..))
+import           Data.Sequence (Seq, (|>))
+import qualified Data.Sequence
 import           Data.Set (Set)
 import qualified Data.Set
 import           Data.Text (Text)
@@ -124,7 +129,6 @@ import qualified Statistics.Sample
 import qualified Statistics.Test.KolmogorovSmirnov
 import           Statistics.Types (Sample)
 import           System.IO (hFlush, hPutChar, stdout)
-import           System.IO.Unsafe (unsafePerformIO)
 import           System.Log.Data (MonadRecord(), Data, Lvl, Msg)
 import qualified System.Log.Simple
 import           System.Random (Random(), RandomGen())
@@ -226,7 +230,7 @@ data InvalidLinearConstraintReason i e
 toMFA
   :: (i ~ FluxVar a a, k ~ MetaboliteVar a, a ~ Text, e ~ Double)
   => MFASpec i k a e
-  -> MFA i k e
+  -> IO (IORef (Seq (Map i e)), MFA i k e)
 toMFA MFASpec{..} =
   let
     ixs :: Set (FluxVar Text Text)
@@ -382,10 +386,17 @@ toMFA MFASpec{..} =
     levmar0, levmar1, levmar2 :: LevMar Double (Params Double, Info Double, Matrix Double)
     levmar0 = Numeric.LevMar.Extras.LevMar.levmar model mJac ps0 ys constraints
     levmar1@(LevMar _ mkWeightedResiduals (Just mkWeightedJacobian) _ _ _) = Numeric.LevMar.Extras.LevMar.weighted sigmas levmar0
-    levmar2 = Numeric.LevMar.Extras.LevMar.fixParams ascList levmar1
+    levmar2@(LevMar done _ _ _ _ _) = Numeric.LevMar.Extras.LevMar.fixParams ascList levmar1
   in
     case fmap (\(ps, info, covar_ps) -> toMFAResult ps covar_ps (mkWeightedResiduals ps) (mkWeightedJacobian ps) info) levmar2 of
-      LevMar new_done new_model new_mJac new_ps0 new_ys new_constraints -> MFA (Numeric.LevMar.Extras.LevMar.runLevMar (LevMar new_done (new_model . (\x -> unsafePerformIO (hPutChar stdout 'x' >> hFlush stdout >> return x))) (fmap (\f -> f . (\x -> unsafePerformIO (hPutChar stdout 'J' >> hFlush stdout >> return x))) new_mJac) new_ps0 new_ys new_constraints))
+      levmar3 -> do
+        let
+          mkMap = Data.Map.Strict.fromAscList . zip ixsAscList . Numeric.LinearAlgebra.HMatrix.toList . (\ps -> let (new_ps, _, _) = done (ps, undefined, undefined) in new_ps)
+          newSt = Data.IORef.newIORef . Data.Sequence.singleton . mkMap
+          withModelSt ref f ps = hPutChar stdout 'x' >> hFlush stdout >> Data.IORef.atomicModifyIORef' ref (\acc -> let x = mkMap ps in x `seq` (acc |> x, f ps))
+          withJacobianSt _ref f ps = hPutChar stdout 'J' >> hFlush stdout >> return (f ps)
+        (s, levmar4) <- Numeric.LevMar.Extras.LevMar.unsafeWithLevMarIO newSt withModelSt withJacobianSt levmar3
+        return (s, MFA (Numeric.LevMar.Extras.LevMar.runLevMar levmar4))
 
 toMFASpec
   :: (RandomGen g, Monad m, MonadRecord (Data Lvl, (Data Msg, ())) m, i ~ FluxVar a a, k ~ MetaboliteVar a, a ~ Text, e ~ Double)
@@ -703,6 +714,8 @@ toArchive
   -- ^ stoichiometric models for EMU reaction network
   -> MFAResult i k e
   -- ^ result of MFA computation
+  -> Seq (Map i e)
+  -- ^ parameters at each iteration index
   -> m Archive
   -- ^ archive
 toArchive = toArchiveWith Data.Csv.defaultEncodeOptions
@@ -718,9 +731,11 @@ toArchiveWith
   -- ^ stoichiometric models for EMU reaction network
   -> MFAResult i k e
   -- ^ result of MFA computation
+  -> Seq (Map i e)
+  -- ^ parameters at each iteration index
   -> m Archive
   -- ^ archive
-toArchiveWith opts modtime MFASpec{..} MFAResult{..} = do
+toArchiveWith opts modtime MFASpec{..} MFAResult{..} mfaParamsSeq = do
   System.Log.Simple.info "Serializing CSV documents"
 
   let
@@ -821,9 +836,7 @@ toArchiveWith opts modtime MFASpec{..} MFAResult{..} = do
         paramsFilePath :: FilePath
         paramsFilePath = "result/parameters.csv"
         paramsCsv :: ByteString
-        paramsCsv = MFAPipe.Csv.Types.Parameters.encodeWith opts (ParametersRecords ixs params)
-          where
-            params = map (Data.Map.Strict.fromAscList . zip (Data.Set.toAscList ixs) . Numeric.LinearAlgebra.HMatrix.toList) [_mfaSpecInitialParams]
+        paramsCsv = MFAPipe.Csv.Types.Parameters.encodeWith opts (ParametersRecords ixs (toList mfaParamsSeq))
 
   -- "./result/contribution.csv"
   System.Log.Simple.debug "[9] \"Contribution\" matrix"
