@@ -79,6 +79,7 @@ executable mfaPipe
     MFAPipe.Csv.Types.MassFractionVector
     MFAPipe.Csv.Types.NullspaceMatrix
     MFAPipe.Csv.Types.ObjectiveFunction
+    MFAPipe.Csv.Types.Parameters
     MFAPipe.Csv.Types.ReactionNetwork
     MFAPipe.Csv.Types.Residual
     MFAPipe.Csv.Types.Statistics

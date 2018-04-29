@@ -87,6 +87,8 @@ import           MFAPipe.Csv.Types.MassFractionVector (MassFractionVectorRecords
 import qualified MFAPipe.Csv.Types.MassFractionVector
 import           MFAPipe.Csv.Types.NullspaceMatrix (NullspaceMatrixRecords(..))
 import qualified MFAPipe.Csv.Types.NullspaceMatrix
+import           MFAPipe.Csv.Types.Parameters (ParametersRecords(..))
+import qualified MFAPipe.Csv.Types.Parameters
 import qualified MFAPipe.Csv.Types.ReactionNetwork
 import           MFAPipe.Csv.Types.Residual (WeightedResidualRecords(..))
 import qualified MFAPipe.Csv.Types.Residual
@@ -689,6 +691,7 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
 -- >     +-- flux_covariance.csv
 -- >     +-- info.csv
 -- >     +-- jacobian.csv
+-- >     +-- parameters.csv
 -- >     +-- residual.csv
 -- >     +-- statistics.csv
 --
@@ -802,6 +805,7 @@ toArchiveWith opts modtime MFASpec{..} MFAResult{..} = do
         fluxCovarianceMatrixCsv = MFAPipe.Csv.Types.FluxCovarianceMatrix.encodeWith opts (FluxCovarianceMatrixRecords ixs _mfaResultFluxCovariance)
 
   -- "./result/info.csv"
+  -- "./result/parameters.csv"
   System.Log.Simple.debug "[8] Fitting information"
   let
     infoEntry :: Entry
@@ -811,6 +815,15 @@ toArchiveWith opts modtime MFASpec{..} MFAResult{..} = do
         infoFilePath = "result/info.csv"
         infoCsv :: ByteString
         infoCsv = MFAPipe.Csv.Types.Info.encodeWith opts [_mfaResultInfo]
+    paramsEntry :: Entry
+    paramsEntry = Codec.Archive.Zip.toEntry paramsFilePath modtime paramsCsv
+      where
+        paramsFilePath :: FilePath
+        paramsFilePath = "result/parameters.csv"
+        paramsCsv :: ByteString
+        paramsCsv = MFAPipe.Csv.Types.Parameters.encodeWith opts (ParametersRecords ixs params)
+          where
+            params = map (Data.Map.Strict.fromAscList . zip (Data.Set.toAscList ixs) . Numeric.LinearAlgebra.HMatrix.toList) [_mfaSpecInitialParams]
 
   -- "./result/contribution.csv"
   System.Log.Simple.debug "[9] \"Contribution\" matrix"
@@ -893,6 +906,7 @@ toArchiveWith opts modtime MFASpec{..} MFAResult{..} = do
             , fluxEntry
             , fluxCovarianceMatrixEntry
             , infoEntry
+            , paramsEntry
             , contributionMatrixEntry
             , jacobianMatrixEntry
             , statisticsEntry

@@ -72,6 +72,10 @@ cFreeVarFieldName :: ByteString
 cFreeVarFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Independent Variable")
 {-# INLINE cFreeVarFieldName #-}
 
+-- | The field name for iteration indices.
+cIterationIndexFieldName :: ByteString
+cIterationIndexFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Iteration Index")
+
 -- | The field naem for Kolmogorov-Smirnov statistics.
 cKolmogorovSmirnovDFieldName :: ByteString
 cKolmogorovSmirnovDFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Kolmogorov-Smirnov \"D\" Statistic")
