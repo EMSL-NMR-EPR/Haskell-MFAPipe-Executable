@@ -76,12 +76,12 @@ cFreeVarFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Independent V
 cIterationIndexFieldName :: ByteString
 cIterationIndexFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Iteration Index")
 
--- | The field naem for Kolmogorov-Smirnov statistics.
+-- | The field name for Kolmogorov-Smirnov statistics.
 cKolmogorovSmirnovDFieldName :: ByteString
 cKolmogorovSmirnovDFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Kolmogorov-Smirnov \"D\" Statistic")
 {-# INLINE cKolmogorovSmirnovDFieldName #-}
 
--- | The field naem for Kolmogorov-Smirnov probabilities.
+-- | The field name for Kolmogorov-Smirnov probabilities.
 cKolmogorovSmirnovProbabilityFieldName :: ByteString
 cKolmogorovSmirnovProbabilityFieldName = Data.Text.Encoding.encodeUtf8 (Data.Text.pack "Kolmogorov-Smirnov Probability")
 {-# INLINE cKolmogorovSmirnovProbabilityFieldName #-}
