@@ -179,7 +179,7 @@ doMFA model seed0 g0 itMax opts k = do
     Right mfaSpec -> do
       System.Log.Simple.info "MFA simulation was constructed successfully!"
       System.Log.Simple.info "Executing MFA simulation"
-      System.Log.Simple.warning (Text.Printf.printf "Using seed for random number generator: %d)" seed0)
+      System.Log.Simple.warning (Text.Printf.printf "Using seed for random number generator: %d" seed0)
       (mfaParamsRef, mfa) <- Control.Monad.IO.Class.liftIO (MFAPipe.MFA.toMFA mfaSpec)
       e' <- return (MFAPipe.MFA.runMFA mfa itMax opts) `Control.Monad.Error.Class.catchError` \err -> do
         -- TODO pretty
