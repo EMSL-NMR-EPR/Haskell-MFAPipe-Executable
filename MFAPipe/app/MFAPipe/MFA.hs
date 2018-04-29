@@ -639,6 +639,18 @@ toMFASpec (FluxJS.Model radixMaybe0 reactionNetwork0 experiments0 (FluxJS.Constr
   System.Log.Simple.info "Initializing metabolic flux variables"
   initialParams <- getRandomParamsM mfaConstraints (snd _denseIntermediate)
   System.Log.Simple.info "Metabolic flux variables were initialized successfully!"
+  System.Log.Simple.debug (Text.Printf.printf "Initialized %s" (pluralizeWith (++ "s") (Numeric.LinearAlgebra.HMatrix.size initialParams) "metabolic flux variable"))
+  forM_ (zip (enumFromThen 1 2 :: [Integer]) (Numeric.LinearAlgebra.HMatrix.toList initialParams)) $ \ ~(n, x) -> do
+    let
+      ix :: Int
+      ix = fromInteger n - 1
+      u = Data.Set.toAscList _denseReactionIndices !! ix
+      u' = Data.Text.Lazy.unpack (Text.PrettyPrint.Leijen.Text.displayT (Text.PrettyPrint.Leijen.Text.renderCompact (pretty u)))
+    if Data.Map.Strict.member ix _mfaConstraintsEqualities
+      then do
+        System.Log.Simple.debug (Text.Printf.printf "[%d] %s = %f (bound)" n u' x)
+      else do
+        System.Log.Simple.debug (Text.Printf.printf "[%d] %s = %f" n u' x)
 
   return $ MFASpec
     { _mfaSpecRadix = radix
